@@ -1,0 +1,3 @@
+http://www.iquilezles.org/www/articles/distfunctions2d/distfunctions2d.htm
+
+http://www.onelonecoder.com/projects_2dcollision.html
