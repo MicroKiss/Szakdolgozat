@@ -1,4 +1,12 @@
-var engine = {};
+var engine = {
+    gravity: 9,
+    friction: 0.8,
+    index: NaN,
+    shapes: {
+        CIRCLE: "circle",
+        RECTANGLE: "rectangle",
+    }
+};
 
 engine._pressedKeys = {}; //asszociatív tömbben tároljuk, hogy egy gomb le van-e nyomva
 document.onkeydown = function (e) {
@@ -56,8 +64,8 @@ engine.circleIntersect = function (x1, y1, r1, x2, y2, r2) {
 
 // meg nem biztos h jo https://stackoverflow.com/questions/21089959/detecting-collision-of-rectangle-with-circle
 engine.rectCircleColliding = function (rect, circle) {
-    var distX = Math.abs(circle.center.x - rect.x - rect.w / 2);
-    var distY = Math.abs(circle.center.y - rect.y - rect.h / 2);
+    var distX = Math.abs(circle.x - rect.x - rect.w / 2);
+    var distY = Math.abs(circle.y - rect.y - rect.h / 2);
 
     if (distX > (rect.w / 2 + circle.r)) { return false; }
     if (distY > (rect.h / 2 + circle.r)) { return false; }
@@ -71,16 +79,20 @@ engine.rectCircleColliding = function (rect, circle) {
 }
 
 engine.doEntitiesIntersect = function (first, second) {
+    if (first === second)
+        return true;
+
+
     if (first.shape == second.shape) {
-        if (first.shape == "rectangle")
+        if (first.shape == engine.shapes.RECTANGLE)
             return engine.rectangleIntersect(first.x, first.y, first.width, first.height, second.x, second.y, second.width, second.height);
-        if (first.shape == "circle")
-            return engine.circleIntersect(first.center.x, first.center.y, first.r, second.center.x, second.center.y, second.r);
+        if (first.shape == engine.shapes.CIRCLE)
+            return engine.circleIntersect(first.x, first.y, first.r, second.x, second.y, second.r);
     }
 
-    if (first.shape == "rectangle" && second.shape == "circle")
+    if (first.shape == engine.shapes.RECTANGLE && second.shape == engine.shapes.CIRCLE)
         return engine.rectCircleColliding(first, second);
-    if (second.shape == "rectangle" && first.shape == "circle")
+    if (second.shape == engine.shapes.RECTANGLE && first.shape == engine.shapes.CIRCLE)
         return engine.rectCircleColliding(second, first);
 
     return false;
@@ -156,26 +168,74 @@ engine.createIndex = function (entities, size) { //bin index készítés
     };
 };
 
+engine.handleCollision = function (first, second, deltaTime) {
+    //ball to ball
+    if (first.shape == engine.shapes.CIRCLE && second.shape == first.shape) {
+        null;
+        //TODO
+
+    }
+};
+
+
+engine.simulatePhysics = function (entities) {
+    //get fps   
+    let deltaTime = 0.05;
+
+    index = engine.createIndex(entities);
+
+
+
+    for (let entity of entities) {
+        entity.physicsUpdate(deltaTime);
+        const others = index.query(entity.getLeft(), entity.getTop(), entity.getWidth(), entity.getHeight());
+        others.forEach(other => {
+            engine.handleCollision(entity, other, deltaTime);
+        });
+        //csinaljanak dolgokat
+    }
+};
+
+
+engine.place_meeting = function (x, y, w, h, obj) {
+
+    const entities = gameContext.index.query(
+        x,
+        y,
+        this.getWidth(),
+        this.getHeight()
+    );
+
+    for (let entity of entities)
+        if (entity instanceof obj && entity != this)
+            return true;
+    return false;
+};
+
 
 
 engine.Entity = class Entity {
     constructor(x, y, w, h, shape) {
         if (!shape) {
-            shape = "rectangle";
+            shape = engine.shapes.RECTANGLE;
         }
         this.x = x;
         this.y = y;
+        this.mass = w * h;
+        this.vx = 0;
+        this.vy = 0;
+        this.ax = 0;
+        this.ay = 0;
 
         this.width = w;
         this.height = h;
         this.shape = shape;
-        if (this.shape == "circle") {
-            this.r = this.width / 2;
-            this.center = { x: this.x + this.r, y: this.y + this.r };
-        }
     }
 
     update() {
+    }
+
+    physicsUpdate() {
     }
 
     draw() {
