@@ -13,6 +13,7 @@ export default class Ball extends engine.Entity {
 
     }
 
+
     physicsUpdate(deltaTime) {
         this.ax = -this.vx * this.friction;
         this.ay = -this.vy * this.friction;
