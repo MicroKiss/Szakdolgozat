@@ -1,3 +1,6 @@
+
+https://microkiss.github.io/Szakdolgozat/
+
 # Szakdolgozat
 
 - hatarido : majus 15 (eddigre kell bekotve leadni)
