@@ -13,7 +13,7 @@ canvas.height = innerHeight - 2;
 const entities = [
 ];
 
-let ball = new Ball(55, canvas.height / 2, 44, 600, 0);
+let ball = new Ball(55, canvas.height / 2, 44, 600, 40);
 entities.push(ball);
 ball = new Ball(canvas.width, canvas.height / 2, 44, -500, 0);
 entities.push(ball);

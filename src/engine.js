@@ -1,3 +1,8 @@
+
+import Vector from "./Vector2D.js";
+
+
+
 var engine = {
     gravity: 9,
     friction: 0.8,
@@ -170,16 +175,62 @@ engine.createIndex = function (entities, size) { //bin index készítés
     };
 };
 
+
+
 engine.handleCollision = function (first, second, deltaTime) {
     //ball to ball
     if (first.shape == engine.shapes.CIRCLE && second.shape == first.shape) {
-
+        engine.ballBallCollision(first, second)
 
         //TODO
 
     }
 };
 
+
+engine.ballBallCollision = function (ball, target) {
+    if (ball === target)
+        return;
+    let Distance = Math.sqrt(
+        Math.pow(ball.x - target.x, 2) + Math.pow(ball.y - target.y, 2));
+
+    //Static collision
+    let Overlap = 0.5 * (Distance - ball.r - target.r);
+    ball.x -= Overlap * ((ball.x - target.x) / Distance);
+    ball.y -= Overlap * ((ball.y - target.y) / Distance);
+    target.x += Overlap * ((ball.x - target.x) / Distance);
+    target.y += Overlap * ((ball.y - target.y) / Distance);
+
+    // Dynamic collision
+
+    let v1 = new Vector(ball.vx, ball.vy);
+    let v2 = new Vector(target.vx, target.vy);
+    let m1 = ball.mass
+    let m2 = target.mass
+    let x1 = new Vector(ball.x, ball.y);
+    let x2 = new Vector(target.x, target.y);
+
+    let jobb_oldal = Vector.subtract(x1, x2);
+    let nevezo = ((Math.pow(Vector.subtract(x1, x2).length(), 2)));
+    let szamlalo = Vector.subtract(v1, v2).dot(Vector.subtract(x1, x2));
+    let konstans = ((2 * m2) / (m1 + m2)) * szamlalo / nevezo;
+
+    let first = Vector.subtract(v1, Vector.multiply(jobb_oldal, konstans));
+
+
+    jobb_oldal = Vector.subtract(x2, x1);
+    nevezo = ((Math.pow(Vector.subtract(x2, x1).length(), 2)));
+    szamlalo = Vector.subtract(v2, v1).dot(Vector.subtract(x2, x1));
+    konstans = ((2 * m1) / (m1 + m2)) * szamlalo / nevezo;
+
+    let second = Vector.subtract(v2, Vector.multiply(jobb_oldal, konstans));
+
+    ball.vx = first.x;
+    ball.vy = first.y;
+
+    target.vx = second.x;
+    target.vy = second.y;
+}
 
 engine.simulatePhysics = function (entities) {
     //TODO get fps   
