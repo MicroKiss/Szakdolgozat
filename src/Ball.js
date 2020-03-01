@@ -10,19 +10,16 @@ export default class Ball extends engine.Entity {
         this.vx = vx;
         this.vy = vy;
         this.color = "#" + ((1 << 24) * Math.random() | 0).toString(16);
-
     }
 
 
     physicsUpdate(deltaTime) {
-        this.ax = -this.vx * this.friction;
-        this.ay = -this.vy * this.friction;
+        this.ax = -this.vx * engine.friction;
+        this.ay = -this.vy * engine.friction;
         this.vx += this.ax * deltaTime;
         this.vy += this.ay * deltaTime;
         this.x += this.vx * deltaTime;
         this.y += this.vy * deltaTime;
-
-
 
         if (Math.abs(this.vx) < 0.01)
             this.vx = 0

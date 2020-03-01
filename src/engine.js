@@ -58,7 +58,7 @@ engine.rectangleIntersect = function (x1, y1, w1, h1, x2, y2, w2, h2) {
 };
 //korok metszese
 engine.circleIntersect = function (x1, y1, r1, x2, y2, r2) {
-    return (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2) < r1 + r2;
+    return ((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)) < (r1 + r2) * (r1 + r2);
 }
 
 
@@ -133,11 +133,11 @@ engine.createIndex = function (entities, size) { //bin index készítés
     }
 
     return {
-        query: function (self) {
-            let left = self.getLeft();
-            let top = self.getTop();
-            let width = self.getWidth();
-            let height = self.getHeight();
+        query: function (obj) {
+            let left = obj.getLeft();
+            let top = obj.getTop();
+            let width = obj.getWidth();
+            let height = obj.getHeight();
             let cellLeft = Math.floor(left / size);
             let cellTop = Math.floor(top / size);
             let cellRight = Math.floor((left + width) / size);
@@ -155,8 +155,10 @@ engine.createIndex = function (entities, size) { //bin index készítés
                         var entity = cellData[j];
                         if (result.has(entity))
                             continue;
+                        if (obj === entity)
+                            continue;
 
-                        if (!engine.doEntitiesIntersect(self, entity)) {
+                        if (!engine.doEntitiesIntersect(obj, entity)) {
                             continue; //ha ugyan kozel vannak de megse utkoznek
                         }
                         result.add(entity);
@@ -171,7 +173,8 @@ engine.createIndex = function (entities, size) { //bin index készítés
 engine.handleCollision = function (first, second, deltaTime) {
     //ball to ball
     if (first.shape == engine.shapes.CIRCLE && second.shape == first.shape) {
-        null;
+
+
         //TODO
 
     }
@@ -179,16 +182,18 @@ engine.handleCollision = function (first, second, deltaTime) {
 
 
 engine.simulatePhysics = function (entities) {
-    //get fps   
+    //TODO get fps   
     let deltaTime = 0.05;
 
-    index = engine.createIndex(entities);
+    let index = engine.createIndex(entities);
 
 
 
     for (let entity of entities) {
+        //csak a ra vonatkozo dolgok
         entity.physicsUpdate(deltaTime);
-        const others = index.query(entity.getLeft(), entity.getTop(), entity.getWidth(), entity.getHeight());
+        //utkozesek
+        const others = index.query(entity);
         others.forEach(other => {
             engine.handleCollision(entity, other, deltaTime);
         });
@@ -199,11 +204,11 @@ engine.simulatePhysics = function (entities) {
 
 engine.place_meeting = function (x, y, w, h, obj) {
 
-    const entities = gameContext.index.query(
+    const entities = gameContext.index.query(new engine.Entity(
         x,
         y,
-        this.getWidth(),
-        this.getHeight()
+        w,
+        h)
     );
 
     for (let entity of entities)
