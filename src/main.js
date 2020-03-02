@@ -1,5 +1,6 @@
 import engine from "./engine.js";
 import Ball from "./Ball.js";
+import Wall from "./Wall.js";
 import display from "./display.js";
 
 //npx http-server -c-1
@@ -18,6 +19,9 @@ entities.push(ball);
 ball = new Ball(canvas.width, canvas.height / 2, 44, -500, 0);
 entities.push(ball);
 
+let wall = new Wall(100, 200, 50, 60);
+entities.push(wall);
+
 const sleep = (milliseconds) => {
     return new Promise(resolve => setTimeout(resolve, milliseconds))
 }
@@ -26,8 +30,6 @@ const sleep = (milliseconds) => {
 function main() {
 
     engine.simulatePhysics(entities);
-
-
     display.draw(entities);
 
     requestAnimationFrame(main);

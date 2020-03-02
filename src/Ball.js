@@ -4,7 +4,7 @@ import engine from "./engine.js";
 export default class Ball extends engine.Entity {
 
     constructor(x, y, r, vx, vy) {
-        super(x, y, 2 * r, 2 * r, "circle");
+        super(x, y, 2 * r, 2 * r, engine.shapes.CIRCLE);
         this.r = r;
         this.mass = this.r * this.r * 3.14159;
         this.vx = vx;
