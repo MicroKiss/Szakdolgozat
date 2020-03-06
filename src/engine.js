@@ -1,8 +1,6 @@
 
 import Vector from "./Vector2D.js";
 
-
-
 var engine = {
     gravity: 9,
     friction: 0.8,
@@ -10,10 +8,12 @@ var engine = {
     shapes: {
         CIRCLE: "circle",
         RECTANGLE: "rectangle",
-    }
+    },
+
 };
 
 engine._pressedKeys = {}; //asszociatív tömbben tároljuk, hogy egy gomb le van-e nyomva
+
 document.onkeydown = function (e) {
     engine._pressedKeys[e.which] = true;
 };
@@ -69,17 +69,23 @@ engine.circleIntersect = function (x1, y1, r1, x2, y2, r2) {
 
 // meg nem biztos h jo https://stackoverflow.com/questions/21089959/detecting-collision-of-rectangle-with-circle
 engine.rectCircleColliding = function (rect, circle) {
-    var distX = Math.abs(circle.x - rect.x - rect.w / 2);
-    var distY = Math.abs(circle.y - rect.y - rect.h / 2);
 
-    if (distX > (rect.w / 2 + circle.r)) { return false; }
-    if (distY > (rect.h / 2 + circle.r)) { return false; }
+    let distX = Math.abs(circle.x - rect.x - rect.width / 2);
+    let distY = Math.abs(circle.y - rect.y - rect.height / 2);
 
-    if (distX <= (rect.w / 2)) { return true; }
-    if (distY <= (rect.h / 2)) { return true; }
 
-    var dx = distX - rect.w / 2;
-    var dy = distY - rect.h / 2;
+
+    if (distX > (rect.width / 2 + circle.r)) {
+        return false;
+    }
+    if (distY > (rect.height / 2 + circle.r)) {
+        return false;
+    }
+
+    if (distX <= (rect.width / 2)) { return true; }
+    if (distY <= (rect.height / 2)) { return true; }
+    let dx = distX - rect.width / 2;
+    let dy = distY - rect.height / 2;
     return (dx * dx + dy * dy <= (circle.r * circle.r));
 }
 
@@ -179,12 +185,15 @@ engine.createIndex = function (entities, size) { //bin index készítés
 
 engine.handleCollision = function (first, second, deltaTime) {
     //ball to ball
+
+
     if (first.shape == engine.shapes.CIRCLE && second.shape == first.shape) {
-        engine.ballBallCollision(first, second)
-
-        //TODO
-
+        engine.ballBallCollision(first, second);
     }
+    if (first.shape == engine.shapes.RECTANGLE && second.shape == engine.shapes.CIRCLE) {
+        engine.rectBallCollision(first, second)
+    }
+
 };
 
 
@@ -230,6 +239,93 @@ engine.ballBallCollision = function (ball, target) {
 
     target.vx = second.x;
     target.vy = second.y;
+}
+
+
+var counter = 0;
+engine.rectBallCollision = function (rect, ball) {
+    while (engine.rectCircleColliding(rect, ball)) {
+        console.log("yes they do");
+        console.log('elotte' + ball.x)
+        let dir = ball.getDir();
+        let epszilon = 5;
+
+        ball.x = ball.x - dir.x * epszilon;
+        ball.y = ball.y - dir.y * epszilon;
+        console.log("utanna" + ball.x)
+        console.log(counter++);
+    }
+
+    //eddigi probalkozasok
+
+    if (ball.x < rect.x) {
+        ball.x = rect.x - ball.r;
+        ball.vx *= -1;
+    }
+    else if (ball.x > rect.x + rect.width) {
+        ball.x = rect.x + rect.width + ball.r;
+        ball.vx *= -1;
+    }
+
+    if (ball.y < rect.y) {
+        ball.y = rect.y - ball.r;
+        ball.vy *= -1;
+    }
+    else if (ball.y > rect.y + rect.height) {
+        ball.y = rect.y + rect.height + ball.r;
+        ball.vy *= -1;
+    }
+
+    {
+        /*
+        // sarkak megszerzese
+        let leftUp = { x: rect.x, y: rect.y };
+        let leftDown = { x: rect.x, y: rect.y + rect.height };
+        let rightDown = { x: rect.x + rect.width, y: rect.y + rect.height };
+        let rightUp = { x: rect.x + rect.width, y: rect.y };
+    
+        //oldalakhoz negyzet rendeles
+        let leftBox = { x: rect.x - 50, y: rect.y, width: 50, height: rect.height };
+    
+        if (engine.rectCircleColliding(leftBox, ball)) {
+            ball.x = rect.x - ball.r;
+            ball.vx *= -1;
+        }
+        let rightBox = { x: rightUp.x, y: rightUp.y, width: 50, height: rect.height };
+        if (engine.rectCircleColliding(rightBox, ball)) {
+            ball.x = rect.x + rect.width + ball.r;
+            ball.vx *= -1;
+        }
+        let upBox = { x: rect.x, y: rect.y - 50, width: rect.width, height: 50 };
+    
+        if (engine.rectCircleColliding(upBox, ball)) {
+            ball.y = rect.y - ball.r;
+            ball.vy *= -1;
+        }
+        let downBox = { x: rect.x, y: rect.y + rect.height, width: rect.width, height: 50 };
+        if (engine.rectCircleColliding(downBox, ball)) {
+            ball.y = rect.y + rect.height + ball.r;
+            ball.vy *= -1;
+        }
+    
+    
+    
+    */
+
+
+
+
+        console.log("tortenik valami");;
+
+        // //right and left
+        // if (ball.y + ball.r < rect.y + rect.height && ball.y - ball.r > rect.y) {
+        //     ball.vy *= -1;
+        // }
+        // if (ball.x + ball.r < rect.x + rect.width && ball.x - ball.r > rect.x) {
+        //     ball.vx *= -1;
+        // }
+    }
+
 }
 
 engine.simulatePhysics = function (entities) {
@@ -286,6 +382,10 @@ engine.Entity = class Entity {
         this.width = w;
         this.height = h;
         this.shape = shape;
+    }
+    getDir() {
+        let vdist = Math.sqrt(this.vx ** 2 + this.vy ** 2);
+        return { x: this.vx / vdist, y: this.vy / vdist }
     }
 
     update() {
