@@ -1,9 +1,11 @@
 
 import Vector from "./Vector2D.js";
+import display from "./display.js";
 
 var engine = {
-    gravity: 9,
-    friction: 0.8,
+    deltaTime: 0.1,
+    gravity: 900,
+    friction: 0.3,//0.8
     index: NaN,
     shapes: {
         CIRCLE: "circle",
@@ -86,7 +88,9 @@ engine.rectCircleColliding = function (rect, circle) {
     if (distY <= (rect.height / 2)) { return true; }
     let dx = distX - rect.width / 2;
     let dy = distY - rect.height / 2;
-    return (dx * dx + dy * dy <= (circle.r * circle.r));
+    return (dx * dx + dy * dy <= (circle.r ** 2));
+
+
 }
 
 engine.doEntitiesIntersect = function (first, second) {
@@ -183,7 +187,7 @@ engine.createIndex = function (entities, size) { //bin index készítés
 
 
 
-engine.handleCollision = function (first, second, deltaTime) {
+engine.handleCollision = function (first, second) {
     //ball to ball
 
 
@@ -242,40 +246,81 @@ engine.ballBallCollision = function (ball, target) {
 }
 
 
-var counter = 0;
 engine.rectBallCollision = function (rect, ball) {
-    while (engine.rectCircleColliding(rect, ball)) {
-        console.log("yes they do");
-        console.log('elotte' + ball.x)
-        let dir = ball.getDir();
-        let epszilon = 5;
 
-        ball.x = ball.x - dir.x * epszilon;
-        ball.y = ball.y - dir.y * epszilon;
-        console.log("utanna" + ball.x)
-        console.log(counter++);
-    }
 
-    //eddigi probalkozasok
+    console.log("tortenik valami");;
+    // let left = rect.x - ball.r;
+    // let right = rect.x + rect.width + ball.r;
+    // let top = rect.y - ball.r;
+    // let bottom = rect.y + rect.height + ball.r;
 
-    if (ball.x < rect.x) {
-        ball.x = rect.x - ball.r;
-        ball.vx *= -1;
-    }
-    else if (ball.x > rect.x + rect.width) {
-        ball.x = rect.x + rect.width + ball.r;
-        ball.vx *= -1;
-    }
 
-    if (ball.y < rect.y) {
-        ball.y = rect.y - ball.r;
-        ball.vy *= -1;
-    }
-    else if (ball.y > rect.y + rect.height) {
-        ball.y = rect.y + rect.height + ball.r;
-        ball.vy *= -1;
-    }
+    // let inside = (ball.x < right)
+    // inside &= (ball.x > left)
 
+    // inside &= (ball.y < bottom)
+    // inside &= (ball.y > top)
+
+
+
+
+    //egy felig mukodo megoldas
+    {
+        while (engine.rectCircleColliding(rect, ball)) {
+            let leftBox = { x: rect.x - 50, y: rect.y, width: 50, height: rect.height };
+
+            if (engine.rectCircleColliding(leftBox, ball)) {
+                ball.x = ball.x - 5;
+            }
+            let rightBox = { x: rect.x + rect.width, y: rect.y, width: 50, height: rect.height };
+            if (engine.rectCircleColliding(rightBox, ball)) {
+                ball.x = ball.x + 5;
+            }
+            let upBox = { x: rect.x, y: rect.y - 50, width: rect.width, height: 50 };
+            if (engine.rectCircleColliding(upBox, ball)) {
+                ball.y = ball.y - 5;
+            }
+            let downBox = { x: rect.x, y: rect.y + rect.height, width: rect.width, height: 50 };
+            if (engine.rectCircleColliding(downBox, ball)) {
+                ball.y = ball.y + 5;
+            }
+
+        }
+        // while (engine.rectCircleColliding(rect, ball)) {
+
+        //     let dir = ball.getDir();
+        //     dir.x = ball.x - (rect.x + rect.width / 2);
+        //     dir.y = ball.y - (rect.y + rect.height / 2);
+        //     let dist = Math.sqrt(dir.x ** 2 + dir.y ** 2);
+        //     dir.x = dir.x / dist;
+        //     dir.y = dir.y / dist;
+        //     let epszilon = 10;
+
+        //     ball.x = ball.x + dir.x * epszilon;
+        //     ball.y = ball.y + dir.y * epszilon;
+        // }
+
+
+        if (ball.x < rect.x) {
+            ball.x = rect.x - ball.r;
+            ball.vx *= -1;
+        }
+        else if (ball.x > rect.x + rect.width) {
+            ball.x = rect.x + rect.width + ball.r;
+            ball.vx *= -1;
+        }
+
+        if (ball.y < rect.y) {
+            ball.y = rect.y - ball.r;
+            ball.vy *= -1;
+        }
+        else if (ball.y > rect.y + rect.height) {
+            ball.y = rect.y + rect.height + ball.r;
+            ball.vy *= -1;
+        }
+    }
+    //eddigi probalkozasok amik nem mukodnek
     {
         /*
         // sarkak megszerzese
@@ -315,7 +360,6 @@ engine.rectBallCollision = function (rect, ball) {
 
 
 
-        console.log("tortenik valami");;
 
         // //right and left
         // if (ball.y + ball.r < rect.y + rect.height && ball.y - ball.r > rect.y) {
@@ -330,7 +374,7 @@ engine.rectBallCollision = function (rect, ball) {
 
 engine.simulatePhysics = function (entities) {
     //TODO get fps   
-    let deltaTime = 0.05;
+    //let engine.deltaTime = 0.05;
 
     let index = engine.createIndex(entities);
 
@@ -338,11 +382,11 @@ engine.simulatePhysics = function (entities) {
 
     for (let entity of entities) {
         //csak a ra vonatkozo dolgok
-        entity.physicsUpdate(deltaTime);
+        entity.physicsUpdate(engine.deltaTime);
         //utkozesek
         const others = index.query(entity);
         others.forEach(other => {
-            engine.handleCollision(entity, other, deltaTime);
+            engine.handleCollision(entity, other);
         });
         //csinaljanak dolgokat
     }

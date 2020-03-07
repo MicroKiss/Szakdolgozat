@@ -20,10 +20,14 @@ const entities = [
 document.oncontextmenu = (e) => { e.preventDefault(); };
 document.onmousemove = (e) => {
 
-    mouseX = e.pageX;
-    mouseY = e.pageY;
+    var rect = canvas.getBoundingClientRect();
+    mouseX = e.clientX - rect.left;
+    mouseY = e.clientY - rect.top;
 
-    if (selectedball != NaN && mouseBtn == 0) {
+
+    if (selectedball && mouseBtn == 0) {
+        selectedball.vx = 0;
+        selectedball.vy = 0;
 
         selectedball.x = mouseX;
         selectedball.y = mouseY;
@@ -56,7 +60,7 @@ document.onmouseup = function (e) {
     e.preventDefault();
     if (e.button === 2) {
 
-        if (selectedball != NaN) {
+        if (selectedball) {
             let vectorx = selectedball.x - mouseX;
             let vectory = selectedball.y - mouseY;
 
@@ -72,24 +76,41 @@ document.onmouseup = function (e) {
 
 
 
-let wall = new Wall(canvas.width / 2 - 2, canvas.height / 2 - 50, 222, 222);
+let wall = new Wall(0, canvas.height - 50, canvas.width, 50);
+entities.push(wall);
+
+wall = new Wall(0, 0, 50, canvas.height);
+entities.push(wall);
+wall = new Wall(canvas.width - 50, 0, 50, canvas.height);
 entities.push(wall);
 //let ball = new Ball(canvas.width / 2, canvas.height, 44, 0, -300);
 //entities.push(ball);
-let ball = new Ball(canvas.width, canvas.height / 2 + 100, 44, -700, -50);
-entities.push(ball);
+for (let i = 0; i < 2; i++) {
+    let x = Math.random() * 800 + 100;
+    let y = Math.random() * 500 + 100;
+    let r = Math.random() * 20 + 15;
+    let vx = Math.random() * 200 - 100;
+    let vy = Math.random() * 200 - 100;
+    let ball = new Ball(x, y, r, vx, vy);
+    entities.push(ball);
+
+}
+
+
+
+// let ball = new Ball(canvas.width, canvas.height / 2 + 100, 10, -700, -50);
+// entities.push(ball);
 
 
 const sleep = (milliseconds) => {
     return new Promise(resolve => setTimeout(resolve, milliseconds))
 }
-
+var ctx = document.getElementById('canvas').getContext('2d');
 
 function main() {
 
     engine.simulatePhysics(entities);
     display.draw(entities);
-
     requestAnimationFrame(main);
 
 }

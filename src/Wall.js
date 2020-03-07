@@ -13,6 +13,7 @@ export default class Wall extends engine.Entity {
     draw(ctx) {
         ctx.fillStyle = this.color;
         ctx.fillRect(this.x, this.y, this.width, this.height);
+        //tmp
 
     }
 
