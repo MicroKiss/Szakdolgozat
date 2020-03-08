@@ -7,8 +7,8 @@ import display from "./display.js";
 
 const canvas = document.getElementById('canvas');
 
-canvas.width = innerWidth - 1;
-canvas.height = innerHeight - 2;
+canvas.width = innerWidth - 10;
+canvas.height = innerHeight - 20;
 
 var selectedball = NaN;
 var mouseX;
@@ -85,7 +85,7 @@ wall = new Wall(canvas.width - 50, 0, 50, canvas.height);
 entities.push(wall);
 //let ball = new Ball(canvas.width / 2, canvas.height, 44, 0, -300);
 //entities.push(ball);
-for (let i = 0; i < 2; i++) {
+for (let i = 0; i < 100; i++) {
     let x = Math.random() * 800 + 100;
     let y = Math.random() * 500 + 100;
     let r = Math.random() * 20 + 15;

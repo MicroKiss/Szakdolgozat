@@ -69,7 +69,7 @@ engine.circleIntersect = function (x1, y1, r1, x2, y2, r2) {
 }
 
 
-// meg nem biztos h jo https://stackoverflow.com/questions/21089959/detecting-collision-of-rectangle-with-circle
+// forras https://stackoverflow.com/questions/21089959/detecting-collision-of-rectangle-with-circle
 engine.rectCircleColliding = function (rect, circle) {
 
     let distX = Math.abs(circle.x - rect.x - rect.width / 2);
@@ -267,23 +267,35 @@ engine.rectBallCollision = function (rect, ball) {
 
     //egy felig mukodo megoldas
     {
+        let downBox = { x: rect.x, y: rect.y + rect.height, width: rect.width, height: 50 };
+        let rightBox = { x: rect.x + rect.width, y: rect.y, width: 50, height: rect.height };
+        let upBox = { x: rect.x, y: rect.y - 50, width: rect.width, height: 50 };
+        let leftBox = { x: rect.x - 50, y: rect.y, width: 50, height: rect.height };
         while (engine.rectCircleColliding(rect, ball)) {
-            let leftBox = { x: rect.x - 50, y: rect.y, width: 50, height: rect.height };
 
             if (engine.rectCircleColliding(leftBox, ball)) {
-                ball.x = ball.x - 5;
+                do {
+                    ball.x = ball.x - 5;
+
+                } while (engine.rectCircleColliding(leftBox, ball));
             }
-            let rightBox = { x: rect.x + rect.width, y: rect.y, width: 50, height: rect.height };
             if (engine.rectCircleColliding(rightBox, ball)) {
-                ball.x = ball.x + 5;
+                do {
+                    ball.x = ball.x + 5;
+
+                } while (engine.rectCircleColliding(rightBox, ball));
             }
-            let upBox = { x: rect.x, y: rect.y - 50, width: rect.width, height: 50 };
             if (engine.rectCircleColliding(upBox, ball)) {
-                ball.y = ball.y - 5;
+                do {
+                    ball.y = ball.y - 5;
+
+                } while (engine.rectCircleColliding(upBox, ball));
             }
-            let downBox = { x: rect.x, y: rect.y + rect.height, width: rect.width, height: 50 };
             if (engine.rectCircleColliding(downBox, ball)) {
-                ball.y = ball.y + 5;
+                do {
+                    ball.y = ball.y + 5;
+
+                } while (engine.rectCircleColliding(downBox, ball));
             }
 
         }
