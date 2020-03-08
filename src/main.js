@@ -25,14 +25,26 @@ document.onmousemove = (e) => {
     mouseX = e.clientX - rect.left;
     mouseY = e.clientY - rect.top;
 
-
-    if (selectedball && mouseBtn == 0) {
-        selectedball.vx = 0;
-        selectedball.vy = 0;
-
-        selectedball.x = mouseX;
-        selectedball.y = mouseY;
-    }
+    /*
+        if (selectedball && mouseBtn == 0) {
+            let vectorx = mouseX - selectedball.x;
+            let vectory = mouseY - selectedball.y;
+            let distance = Math.sqrt(vectorx ** 2 + vectory ** 2);
+            if (distance > 500) {
+                selectedball.vx /= distance;
+                selectedball.vy /= distance;
+    
+            }
+    
+    
+            selectedball.vx += vectorx;
+            selectedball.vy += vectory;
+    
+            
+            selectedball.x = mouseX;
+            selectedball.y = mouseY;
+}
+*/
 }
 
 document.onmousedown = function (e) {
@@ -85,7 +97,7 @@ for (let index = 0; index < canvas.width / wall_width; index++) {
 
 }
 
-wall = new RoundedWall(55, 700, 700, 99, 10);
+wall = new RoundedWall(0, 0, 500, 700, 10);
 entities.push(wall);
 
 // wall = new Wall(0, 0, 50, canvas.height);
@@ -122,6 +134,25 @@ function main() {
     display.draw(entities);
     requestAnimationFrame(main);
 
+
+
+    if (selectedball && mouseBtn == 0) {
+        let vectorx = mouseX - selectedball.x;
+        let vectory = mouseY - selectedball.y;
+        let distance = Math.sqrt(vectorx ** 2 + vectory ** 2);
+        if (distance > 500) {
+            selectedball.vx /= distance;
+            selectedball.vy /= distance;
+
+        }
+
+        let epsilon = Math.PI;
+        selectedball.vx += vectorx * epsilon;
+        selectedball.vy += vectory * epsilon;
+
+        selectedball.vx *= 0.6;
+        selectedball.vy *= 0.6;
+    }
 }
 
 main();
