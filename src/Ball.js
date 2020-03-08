@@ -15,7 +15,6 @@ export default class Ball extends engine.Entity {
 
     physicsUpdate(deltaTime) {
         let gravityForce = engine.gravity * deltaTime ** 2 / 2;
-        console.log(gravityForce);
 
         this.ax = -this.vx * engine.friction;
         this.ay = -this.vy * engine.friction;

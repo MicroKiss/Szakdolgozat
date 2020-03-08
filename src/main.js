@@ -2,6 +2,7 @@ import engine from "./engine.js";
 import Ball from "./Ball.js";
 import Wall from "./Wall.js";
 import display from "./display.js";
+import RoundedWall from "./Wall2.js"
 
 //npx http-server -c-1
 
@@ -75,19 +76,27 @@ document.onmouseup = function (e) {
 
 
 
+let wall;
 
-let wall = new Wall(0, canvas.height - 50, canvas.width, 50);
+let wall_width = 300;
+for (let index = 0; index < canvas.width / wall_width; index++) {
+    wall = new RoundedWall(index * wall_width, canvas.height - 64, index * wall_width + wall_width, canvas.height - 84, 20);
+    entities.push(wall);
+
+}
+
+wall = new RoundedWall(55, 700, 700, 99, 10);
 entities.push(wall);
 
-wall = new Wall(0, 0, 50, canvas.height);
-entities.push(wall);
-wall = new Wall(canvas.width - 50, 0, 50, canvas.height);
-entities.push(wall);
+// wall = new Wall(0, 0, 50, canvas.height);
+// entities.push(wall);
+// wall = new Wall(canvas.width - 50, 0, 50, canvas.height);
+// entities.push(wall);
 //let ball = new Ball(canvas.width / 2, canvas.height, 44, 0, -300);
 //entities.push(ball);
-for (let i = 0; i < 100; i++) {
+for (let i = 0; i < 20; i++) {
     let x = Math.random() * 800 + 100;
-    let y = Math.random() * 500 + 100;
+    let y = Math.random() * 200 + 100;
     let r = Math.random() * 20 + 15;
     let vx = Math.random() * 200 - 100;
     let vy = Math.random() * 200 - 100;
