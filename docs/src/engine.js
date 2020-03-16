@@ -3,6 +3,7 @@ import Vector from "./Vector2D.js";
 var engine = {
     lastTick: performance.now(),
     deltaTime: NaN,
+    PhysicsPrecision: 0.01, // 1/this is the number of physics simulations /secs
     gravity: 30 ** 2,
     friction: 0.8,//0.8
     index: NaN,
@@ -487,20 +488,28 @@ engine.simulatePhysics = function (entities) {
     engine.lastTick = now;
 
 
-    let index = engine.createIndex(entities);
 
+    // this way there is always 
+    let loopindex = engine.deltaTime / engine.PhysicsPrecision;
 
+    for (let i = 0; i < loopindex; i++) {
+        let deltatime = engine.deltaTime / loopindex;
+        let index = engine.createIndex(entities);
 
-    for (let entity of entities) {
-        //csak a ra vonatkozo dolgok
-        entity.physicsUpdate(engine.deltaTime);
-        //utkozesek
-        const others = index.query(entity);
-        others.forEach(other => {
-            engine.handleCollision(entity, other);
-        });
-        //csinaljanak dolgokat
+        for (let entity of entities) {
+            //csak a ra vonatkozo dolgok
+            entity.physicsUpdate(deltatime);
+            //utkozesek
+            const others = index.query(entity);
+            others.forEach(other => {
+                engine.handleCollision(entity, other);
+            });
+            //csinaljanak dolgokat
+        }
+
     }
+
+
 };
 
 

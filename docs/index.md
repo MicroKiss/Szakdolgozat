@@ -4,6 +4,17 @@
 ## jelenlegi demo:
 [Demo](src)
 
+<p>
+<small>
+Utolsó módosítás:
+<script>
+var x = new Date(document.lastModified);
+Modif = new Date(x.toGMTString());
+document.write(Modif);
+</script>&nbsp;
+</small>
+</p>
+
 ## milestones
   * fizikai szimulacio, labdak es falak kozt
   * portalok falra
