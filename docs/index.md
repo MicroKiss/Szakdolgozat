@@ -2,7 +2,7 @@
 > hatarido : majus 15 (eddigre kell bekotve leadni)
 
 ##jelenlegi demo :
-[I'm a relative reference to a repository file](../blob/master/src/index.html)
+[Demo](../src/index.html)
 
 ## milestones
   * fizikai szimulacio, labdak es falak kozt
