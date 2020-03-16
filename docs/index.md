@@ -1,8 +1,8 @@
 # Szakdolgozat: Portal 2D
 > hatarido : majus 15 (eddigre kell bekotve leadni)
 
-##jelenlegi demo :
-[Demo](../src/index.html)
+## jelenlegi demo:
+[Demo](src)
 
 ## milestones
   * fizikai szimulacio, labdak es falak kozt
