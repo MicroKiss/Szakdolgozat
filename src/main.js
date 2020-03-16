@@ -132,6 +132,12 @@ function main() {
 
     engine.simulatePhysics(entities);
     display.draw(entities);
+
+    ///fps
+    ctx.font = "30px Arial";
+    ctx.fillStyle = "red";
+    ctx.textAlign = "center";
+    ctx.fillText("fps: " + (1 / engine.deltaTime).toFixed(2), canvas.width - 100, 50);
     requestAnimationFrame(main);
 
 

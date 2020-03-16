@@ -1,9 +1,10 @@
 
 import Vector from "./Vector2D.js";
 var engine = {
-    deltaTime: 0.1,
-    gravity: 900,
-    friction: 0.3,//0.8
+    lastTick: performance.now(),
+    deltaTime: NaN,
+    gravity: 30 ** 2,
+    friction: 0.8,//0.8
     index: NaN,
     shapes: {
         CIRCLE: "circle",
@@ -27,36 +28,7 @@ engine.isDown = function (key) {
     return engine._pressedKeys[key] === true;
 };
 
-engine.image = function (src) {
-    var img = document.createElement('img');
-    img.src = src;
-    return img;
-};
 
-engine.load = function (images, onLoad, onProgress) {
-    var loaded = 0;
-
-    function checkLoaded() {
-        if (onProgress) {
-            onProgress(loaded / images.length * 100);
-        }
-        if (loaded === images.length) { //ha minden kép be volt töltve, akkor visszahívunk
-            onLoad();
-        }
-    }
-
-    for (var i = 0; i < images.length; i++) {
-        if (images[i].width > 0) { //a kép be van töltve
-            loaded++;
-        } else { //eseménykezelõt rakunk a képre, ha nincs betöltve
-            images[i].addEventListener('load', function () {
-                loaded++;
-                checkLoaded();
-            });
-        }
-    }
-    checkLoaded();
-};
 
 //teglalapok metszese
 engine.rectangleIntersect = function (x1, y1, w1, h1, x2, y2, w2, h2) {
@@ -510,8 +482,10 @@ if (false) {
 
 
 engine.simulatePhysics = function (entities) {
-    //TODO get fps   
-    //let engine.deltaTime = 0.05;
+    let now = performance.now();
+    engine.deltaTime = (now - engine.lastTick) / 1000;
+    engine.lastTick = now;
+
 
     let index = engine.createIndex(entities);
 

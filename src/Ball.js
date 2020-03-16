@@ -6,7 +6,7 @@ export default class Ball extends engine.Entity {
     constructor(x, y, r, vx, vy) {
         super(x, y, 2 * r, 2 * r, engine.shapes.CIRCLE);
         this.r = r;
-        this.mass = this.r * this.r * 3.14159;
+        this.mass = this.r * this.r * 3.14159 / 4000;
         this.vx = vx;
         this.vy = vy;
         this.color = "#" + ((1 << 24) * Math.random() | 0).toString(16);
@@ -14,7 +14,7 @@ export default class Ball extends engine.Entity {
 
 
     physicsUpdate(deltaTime) {
-        let gravityForce = engine.gravity * deltaTime ** 2 / 2;
+        let gravityForce = this.mass * engine.gravity * deltaTime;
 
         this.ax = -this.vx * engine.friction;
         this.ay = -this.vy * engine.friction;
