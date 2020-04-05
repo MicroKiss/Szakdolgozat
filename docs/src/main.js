@@ -108,13 +108,13 @@ entities.push(wall);
 // entities.push(wall);
 //let ball = new Ball(canvas.width / 2, canvas.height, 44, 0, -300);
 //entities.push(ball);
-for (let i = 0; i < 20; i++) {
+for (let i = 0; i < 10; i++) {
     let x = Math.random() * 800 + 100;
     let y = Math.random() * 200 + 100;
     let r = Math.random() * 20 + 15;
     let vx = Math.random() * 200 - 100;
     let vy = Math.random() * 200 - 100;
-    let ball = new Ball(x, y, r, vx, vy);
+    let ball = new Ball(x, y, r);
     entities.push(ball);
 
 }
@@ -140,7 +140,8 @@ function main() {
     ctx.fillStyle = "red";
     ctx.textAlign = "center";
     ctx.fillText("fps: " + (1 / engine.deltaTime).toFixed(2), canvas.width - 100, 50);
-    requestAnimationFrame(main);
+    ctx.fillText("physics simulation per sec: " + parseInt(1 / engine.PhysicsPrecision), canvas.width - 220, 100);
+
 
 
 
@@ -148,29 +149,19 @@ function main() {
         let vectorx = mouseX - selectedball.x;
         let vectory = mouseY - selectedball.y;
         let distance = Math.sqrt(vectorx ** 2 + vectory ** 2);
-        if (distance > 500) {
-            selectedball.vx /= distance;
-            selectedball.vy /= distance;
+        // if (distance > 500) {
+        //     selectedball.vx /= distance;
+        //     selectedball.vy /= distance;
 
-        }
-        let epsilon = Math.PI;
+        // }
+        let epsilon = Math.PI * 5;
         selectedball.vx += vectorx * epsilon;
         selectedball.vy += vectory * epsilon;
         selectedball.vx *= 0.6;
         selectedball.vy *= 0.6;
     }
 
-
-
-    ////for test
-    /*
-    let x = (square.x + square.getWidth() / 2) - ball.x;
-    let y = (square.y + square.getHeight() / 2) - ball.y;
-    let angle = Math.atan2(y, x);
-    console.log(angle * 180.0 / Math.PI)
-*/
-
-    engine.squareBallCollision(wall, new Ball(mouseX, mouseY, 1, 0, 0));
+    requestAnimationFrame(main);
 }
 
 main();

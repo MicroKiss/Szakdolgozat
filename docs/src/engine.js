@@ -5,8 +5,8 @@ var engine = {
     lastTick: performance.now(),
     deltaTime: NaN,
     PhysicsPrecision: 0.01, // 1/this is the number of physics simulations /secs
-    gravity: 30 ** 2,
-    friction: 0.8,//0.8
+    gravity: 9.8,
+    friction: 0.9,//0.9
     index: NaN,
     shapes: {
         CIRCLE: "circle",
@@ -256,9 +256,7 @@ engine.ballBallCollision = function (ball, target) {
     target.vy = second.y;
 }
 
-
 engine.squareBallOverlap = function (square, ball) {
-
     /*
          top    
       B       A
@@ -269,7 +267,6 @@ engine.squareBallOverlap = function (square, ball) {
       C      D
          bottom
     */
-
     let top = square.getTop();
     let bottom = top + square.getHeight();
     let left = square.getLeft();
@@ -296,7 +293,7 @@ engine.squareBallOverlap = function (square, ball) {
         if (ball.x > right)
             return ball.r - Math.hypot(right - ball.x, bottom - ball.y)
         //under it
-        return (square.getHeight() / 2 + ball.r) - (middle.y - ball.y)
+        return (square.getHeight() / 2 + ball.r) - (ball.y - middle.y)
     }
     // one the sides
     //ball.y < bottom & ball.y > top
@@ -306,48 +303,41 @@ engine.squareBallOverlap = function (square, ball) {
         return (square.getWidth() / 2 + ball.r) + (middle.x - ball.x)
 }
 
+
 engine.squareBallCollision = function (square, ball) {
-
+    /*
+      PI/2
+     B     A
+      ****
+ PI   ****   0
+      ****
+    C       D
+     PI*3/2
+*/
     let { x: x, y: y } = square.getCenter();
-
     x = x - ball.x;
     y = y - ball.y;
-    /*
-          PI/2
-         B     A
-          ****
-     PI   ****   0
-          ****
-        C       D
-         PI*3/2
-    */
     let angle = Math.PI - Math.atan2(y, x);
-    const A = Math.PI / 4;
-    const B = Math.PI * 3 / 4;
-    const C = Math.PI * 5 / 4;
-    const D = Math.PI * 7 / 4;
 
     //static displacing
     let overlap = engine.squareBallOverlap(square, ball);
     ball.x += Math.cos(angle) * overlap;
-    console.log(overlap);
-
     ball.y += -Math.sin(angle) * overlap;
 
     //collision effect
-    if (angle < A || angle > D)
-        ball.vx *= -1
-    if (angle < B && angle > A)
-        ball.vy *= -1
-    if (angle < C && angle > B)
-        ball.vx *= -1
-    if (angle < D && angle > C)
-        ball.vy *= -1
-
-
+    if (angle < engine.squareBallCollision.A || angle > engine.squareBallCollision.D)
+        ball.vx *= -engine.friction
+    if (angle < engine.squareBallCollision.B && angle > engine.squareBallCollision.A)
+        ball.vy *= -engine.friction
+    if (angle < engine.squareBallCollision.C && angle > engine.squareBallCollision.B)
+        ball.vx *= -engine.friction
+    if (angle < engine.squareBallCollision.D && angle > engine.squareBallCollision.C)
+        ball.vy *= -engine.friction
 }
-
-
+engine.squareBallCollision.A = Math.PI / 4;
+engine.squareBallCollision.B = Math.PI * 3 / 4;
+engine.squareBallCollision.C = Math.PI * 5 / 4;
+engine.squareBallCollision.D = Math.PI * 7 / 4;
 
 
 engine.roundRectBallCollision = function (rect, ball) {
@@ -375,29 +365,11 @@ engine.roundRectBallCollision = function (rect, ball) {
     // same way we check if two balls have collided
     let fDistance = Math.sqrt((ball.x - fClosestPointX) * (ball.x - fClosestPointX) + (ball.y - fClosestPointY) * (ball.y - fClosestPointY));
 
-    {
-        let v1 = new Vector(ball.vx, ball.vy); // lehet h 0,0 kell
-        let v2 = new Vector(-ball.vx, -ball.vy);
-        let m1 = ball.mass
-        let m2 = ball.mass * .2
-        let x1 = new Vector(ball.x, ball.y);
-        let x2 = new Vector(fClosestPointX, fClosestPointY);
-
-        let jobb_oldal = Vector.subtract(x1, x2);
-        let nevezo = ((Math.pow(Vector.subtract(x1, x2).length(), 2)));
-        let szamlalo = Vector.subtract(v1, v2).dot(Vector.subtract(x1, x2));
-        let konstans = ((2 * m2) / (m1 + m2)) * szamlalo / nevezo;
-
-        let first = Vector.subtract(v1, Vector.multiply(jobb_oldal, konstans));
-
-
-        ball.vx = first.x;
-        ball.vy = first.y;
-
-    }
+    engine.ballBallCollision(ball, { x: fClosestPointX, y: fClosestPointY, r: rect.r, vx: 0, vy: 0, mass: 200 })
 
     // Calculate displacement required
     let fOverlap = 1 * (fDistance - ball.r - rect.r);
+
 
     // Displace Current Ball away from collision
     ball.x -= fOverlap * (ball.x - fClosestPointX) / fDistance;
@@ -405,8 +377,6 @@ engine.roundRectBallCollision = function (rect, ball) {
 
 
 }
-
-
 
 engine.simulatePhysics = function (entities) {
     let now = performance.now();
@@ -453,8 +423,6 @@ engine.place_meeting = function (x, y, w, h, obj) {
             return true;
     return false;
 };
-
-
 
 engine.Entity = class Entity {
     constructor(x, y, w, h, shape) {
