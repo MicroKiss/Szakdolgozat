@@ -1,10 +1,12 @@
 import engine from "./engine.js";
 
 
+//square shaped wall
+
 export default class Wall extends engine.Entity {
 
-    constructor(x, y, w, h) {
-        super(x, y, w, h, engine.shapes.RECTANGLE);
+    constructor(x, y, w) {
+        super(x, y, w, w, engine.shapes.SQUARE);
         this.mass = Infinity;
         this.color = "#" + ((1 << 24) * Math.random() | 0).toString(16);
     }
@@ -16,6 +18,10 @@ export default class Wall extends engine.Entity {
         //tmp
 
     }
+    getCenter() {
+        return { x: this.x + this.getWidth() / 2, y: this.y + this.getHeight() / 2 };
+    }
+
 
 
 }
