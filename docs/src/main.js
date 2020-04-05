@@ -33,14 +33,14 @@ document.onmousemove = (e) => {
             if (distance > 500) {
                 selectedball.vx /= distance;
                 selectedball.vy /= distance;
-    
+
             }
-    
-    
+
+
             selectedball.vx += vectorx;
             selectedball.vy += vectory;
-    
-            
+
+
             selectedball.x = mouseX;
             selectedball.y = mouseY;
 }
@@ -99,6 +99,8 @@ for (let index = 0; index < canvas.width / wall_width; index++) {
 
 wall = new RoundedWall(0, 0, 500, 700, 10);
 entities.push(wall);
+wall = new Wall(canvas.width / 2 - 30, canvas.height / 2 - 30, 60);
+entities.push(wall);
 
 // wall = new Wall(0, 0, 50, canvas.height);
 // entities.push(wall);
@@ -151,14 +153,24 @@ function main() {
             selectedball.vy /= distance;
 
         }
-
         let epsilon = Math.PI;
         selectedball.vx += vectorx * epsilon;
         selectedball.vy += vectory * epsilon;
-
         selectedball.vx *= 0.6;
         selectedball.vy *= 0.6;
     }
+
+
+
+    ////for test
+    /*
+    let x = (square.x + square.getWidth() / 2) - ball.x;
+    let y = (square.y + square.getHeight() / 2) - ball.y;
+    let angle = Math.atan2(y, x);
+    console.log(angle * 180.0 / Math.PI)
+*/
+
+    engine.squareBallCollision(wall, new Ball(mouseX, mouseY, 1, 0, 0));
 }
 
 main();
