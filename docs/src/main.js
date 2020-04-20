@@ -19,32 +19,14 @@ const entities = [
 ];
 
 document.oncontextmenu = (e) => { e.preventDefault(); };
+
+
 document.onmousemove = (e) => {
 
     var rect = canvas.getBoundingClientRect();
     mouseX = e.clientX - rect.left;
     mouseY = e.clientY - rect.top;
 
-    /*
-        if (selectedball && mouseBtn == 0) {
-            let vectorx = mouseX - selectedball.x;
-            let vectory = mouseY - selectedball.y;
-            let distance = Math.sqrt(vectorx ** 2 + vectory ** 2);
-            if (distance > 500) {
-                selectedball.vx /= distance;
-                selectedball.vy /= distance;
-
-            }
-
-
-            selectedball.vx += vectorx;
-            selectedball.vy += vectory;
-
-
-            selectedball.x = mouseX;
-            selectedball.y = mouseY;
-}
-*/
 }
 
 document.onmousedown = function (e) {
@@ -99,8 +81,12 @@ for (let index = 0; index < canvas.width / wall_width; index++) {
 
 wall = new RoundedWall(0, 0, 500, 700, 10);
 entities.push(wall);
-wall = new Wall(canvas.width / 2 - 30, canvas.height / 2 - 30, 60);
+wall = new Wall(canvas.width / 2 - 30, canvas.height / 2 - 30, 300, 40);
 entities.push(wall);
+
+
+
+
 
 // wall = new Wall(0, 0, 50, canvas.height);
 // entities.push(wall);

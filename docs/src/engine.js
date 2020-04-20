@@ -200,9 +200,9 @@ engine.handleCollision = function (first, second) {
     if (first.shape == engine.shapes.CIRCLE && second.shape == first.shape) {
         engine.ballBallCollision(first, second);
     }
-    // if (first.shape == engine.shapes.RECTANGLE && second.shape == engine.shapes.CIRCLE) {
-    //    engine.rectBallCollision(first, second)
-    //}
+    if (first.shape == engine.shapes.RECTANGLE && second.shape == engine.shapes.CIRCLE) {
+        engine.rectBallCollision(first, second)
+    }
     if (first.shape == engine.shapes.SQUARE && second.shape == engine.shapes.CIRCLE) {
         engine.squareBallCollision(first, second)
     }
@@ -277,30 +277,32 @@ engine.squareBallOverlap = function (square, ball) {
     if (ball.y < top) {
         //around 'B' point
         if (ball.x < left)
-            return ball.r - Math.hypot(left - ball.x, top - ball.y)
+            return ball.r - Math.hypot(left - ball.x, top - ball.y);
         //around 'A' point
         if (ball.x > right)
-            return ball.r - Math.hypot(right - ball.x, top - ball.y)
+            return ball.r - Math.hypot(right - ball.x, top - ball.y);
         //directly above
-        return (square.getHeight() / 2 + ball.r) - (middle.y - ball.y)
+        return (square.getHeight() / 2 + ball.r) - (middle.y - ball.y);
     }
     //ball is under the square
     if (ball.y > bottom) {
         //around 'C' point
         if (ball.x < left)
-            return ball.r - Math.hypot(left - ball.x, bottom - ball.y)
+            return ball.r - Math.hypot(left - ball.x, bottom - ball.y);
         //around 'D' point
         if (ball.x > right)
-            return ball.r - Math.hypot(right - ball.x, bottom - ball.y)
+            return ball.r - Math.hypot(right - ball.x, bottom - ball.y);
         //under it
-        return (square.getHeight() / 2 + ball.r) - (ball.y - middle.y)
+        return (square.getHeight() / 2 + ball.r) + (middle.y - ball.y);
     }
     // one the sides
     //ball.y < bottom & ball.y > top
     if (ball.x < left)
-        return (square.getWidth() / 2 + ball.r) - (middle.x - ball.x)
+        return (square.getWidth() / 2 + ball.r) - (middle.x - ball.x);
     if (ball.x > right)
-        return (square.getWidth() / 2 + ball.r) + (middle.x - ball.x)
+        return (square.getWidth() / 2 + ball.r) + (middle.x - ball.x);
+
+    return 0;
 }
 
 
@@ -338,6 +340,93 @@ engine.squareBallCollision.A = Math.PI / 4;
 engine.squareBallCollision.B = Math.PI * 3 / 4;
 engine.squareBallCollision.C = Math.PI * 5 / 4;
 engine.squareBallCollision.D = Math.PI * 7 / 4;
+
+
+engine.rectBallOverlap = function (rect, ball) {
+    /*
+         top    
+      B       A
+       ______ 
+       |    |
+       |    |   right
+       L____J
+      C      D
+         bottom
+    */
+    let top = rect.getTop();
+    let bottom = top + rect.getHeight();
+    let left = rect.getLeft();
+    let right = left + rect.getWidth();
+    let middle = rect.getCenter();
+
+    //ball is above the rect
+    if (ball.y < top) {
+        //around 'B' point
+        if (ball.x < left)
+            return ball.r - Math.hypot(left - ball.x, top - ball.y);
+        //around 'A' point
+        if (ball.x > right)
+            return ball.r - Math.hypot(right - ball.x, top - ball.y);
+        //directly above
+        return (rect.getHeight() / 2 + ball.r) - (middle.y - ball.y);
+    }
+    //ball is under the rect
+    if (ball.y > bottom) {
+        //around 'C' point
+        if (ball.x < left)
+            return ball.r - Math.hypot(left - ball.x, bottom - ball.y);
+        //around 'D' point
+        if (ball.x > right)
+            return ball.r - Math.hypot(right - ball.x, bottom - ball.y);
+        //under it
+        //return (rect.getHeight() / 2 + ball.r) + (middle.y - ball.y)
+    }
+    // one the sides
+    //ball.y < bottom & ball.y > top
+    if (ball.x < left)
+        return (rect.getWidth() / 2 + ball.r) - (middle.x - ball.x);
+    if (ball.x > right)
+        return (rect.getWidth() / 2 + ball.r) + (middle.x - ball.x);
+
+    return 0;
+}
+
+engine.rectBallCollision = function (rect, ball) {
+    /*
+      PI/2
+     B     A
+      ****
+ PI   ****   0
+      ****
+    C       D
+     PI*3/2
+*/
+    let { x: x, y: y } = rect.getCenter();
+    let angle = Math.PI - Math.atan2(y - ball.y, x - ball.x);
+
+    //static displacing
+    let overlap = engine.rectBallOverlap(rect, ball);
+    ball.x += Math.cos(angle) * overlap;
+    ball.y -= Math.sin(angle) * overlap;
+
+    let corners = rect.getCorners();
+
+    let A = Math.PI - Math.atan2(y - corners.A.y, x - corners.A.x);
+    let B = Math.PI - Math.atan2(y - corners.B.y, x - corners.B.x);
+    let C = Math.PI - Math.atan2(y - corners.C.y, x - corners.C.x);
+    let D = Math.PI - Math.atan2(y - corners.D.y, x - corners.D.x);
+
+
+    //collision effect
+    if (angle < A || angle > D)
+        ball.vx *= -engine.friction
+    if (angle < B && angle > A)
+        ball.vy *= -engine.friction
+    if (angle < C && angle > B)
+        ball.vx *= -engine.friction
+    if (angle < D && angle > C)
+        ball.vy *= -engine.friction
+}
 
 
 engine.roundRectBallCollision = function (rect, ball) {
@@ -383,9 +472,7 @@ engine.simulatePhysics = function (entities) {
     engine.deltaTime = (now - engine.lastTick) / 1000;
     engine.lastTick = now;
 
-
-
-    // this way there is always 
+    // this way there is always a given number of phisycs updates in a second
     let loopindex = engine.deltaTime / engine.PhysicsPrecision;
 
     for (let i = 0; i < loopindex; i++) {
