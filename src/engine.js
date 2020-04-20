@@ -343,52 +343,7 @@ engine.squareBallCollision.D = Math.PI * 7 / 4;
 
 
 engine.rectBallOverlap = function (rect, ball) {
-    /*
-         top    
-      B       A
-       ______ 
-       |    |
-       |    |   right
-       L____J
-      C      D
-         bottom
-    */
-    let top = rect.getTop();
-    let bottom = top + rect.getHeight();
-    let left = rect.getLeft();
-    let right = left + rect.getWidth();
-    let middle = rect.getCenter();
-
-    //ball is above the rect
-    if (ball.y < top) {
-        //around 'B' point
-        if (ball.x < left)
-            return ball.r - Math.hypot(left - ball.x, top - ball.y);
-        //around 'A' point
-        if (ball.x > right)
-            return ball.r - Math.hypot(right - ball.x, top - ball.y);
-        //directly above
-        return (rect.getHeight() / 2 + ball.r) - (middle.y - ball.y);
-    }
-    //ball is under the rect
-    if (ball.y > bottom) {
-        //around 'C' point
-        if (ball.x < left)
-            return ball.r - Math.hypot(left - ball.x, bottom - ball.y);
-        //around 'D' point
-        if (ball.x > right)
-            return ball.r - Math.hypot(right - ball.x, bottom - ball.y);
-        //under it
-        //return (rect.getHeight() / 2 + ball.r) + (middle.y - ball.y)
-    }
-    // one the sides
-    //ball.y < bottom & ball.y > top
-    if (ball.x < left)
-        return (rect.getWidth() / 2 + ball.r) - (middle.x - ball.x);
-    if (ball.x > right)
-        return (rect.getWidth() / 2 + ball.r) + (middle.x - ball.x);
-
-    return 0;
+    return engine.squareBallOverlap(rect, ball);
 }
 
 engine.rectBallCollision = function (rect, ball) {

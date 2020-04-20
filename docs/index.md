@@ -32,3 +32,13 @@ amilyen lendülettel áthalad egy tárgy vagy a játékos az egyik portálon, az
 játszani az egyes feladatok megoldásánál. A játék fizikai rendszerét magam valósítanám meg, ezzel egy egyedi fizikai szimulációt
 létrehozva. Az alkalmazást javascript vagy python nyelvekben szeretném megvalósítani, a többszemélyességet pedig tcp alapú web
 socketek segítségével. Többszemélyesség a játékban oly módon fog megnyilványulni, hogy mindkét játékosnak lesz egy-egy portalgun ja és egymást segítve kell a fejtörőket megoldaniuk
+
+
+
+### Eddig
+
+- fps független fizikai szimuláció
+- labda labda ütközés
+- labda négyzet alakú fallal való ütközése
+- labda téglalap alakú fallal való ütközése
+- labda lekerekített téglalap alakú fallal való ütközése
