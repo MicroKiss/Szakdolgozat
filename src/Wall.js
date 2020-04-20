@@ -5,7 +5,7 @@ import engine from "./engine.js";
 
 export default class Wall extends engine.Entity {
 
-    constructor(x, y, w, h) {
+    constructor(x, y, w, h = w) {
         super(x, y, w, h, engine.shapes.RECTANGLE);
         if (this.width === this.height)
             this.shape = engine.shapes.SQUARE;

@@ -72,20 +72,25 @@ document.onmouseup = function (e) {
 
 let wall;
 
-let wall_width = 300;
-for (let index = 0; index < canvas.width / wall_width; index++) {
-    wall = new RoundedWall(index * wall_width, canvas.height - 64, index * wall_width + wall_width, canvas.height - 84, 20);
-    entities.push(wall);
+// wall = new RoundedWall(0, 0, 0, innerHeight, 10);
+// entities.push(wall);
 
-}
 
-wall = new RoundedWall(0, 0, 500, 700, 10);
+//falak
+wall = new Wall(0, innerHeight - 60, innerWidth, 50);
 entities.push(wall);
-wall = new Wall(canvas.width / 2 - 30, canvas.height / 2 - 30, 200, 50);
+wall = new Wall(0, 0, innerWidth, 50);
+entities.push(wall);
+wall = new Wall(0, 0, 20, innerHeight);
+entities.push(wall);
+wall = new Wall(innerWidth - 20, 0, 20, innerHeight);
 entities.push(wall);
 
 
-
+wall = new RoundedWall(200, 200, 600, 600, 10);
+entities.push(wall);
+wall = new Wall(innerWidth * 2 / 3, 450, 100);
+entities.push(wall);
 
 
 // wall = new Wall(0, 0, 50, canvas.height);
@@ -94,7 +99,7 @@ entities.push(wall);
 // entities.push(wall);
 //let ball = new Ball(canvas.width / 2, canvas.height, 44, 0, -300);
 //entities.push(ball);
-for (let i = 0; i < 10; i++) {
+for (let i = 0; i < 100; i++) {
     let x = Math.random() * 800 + 100;
     let y = Math.random() * 200 + 100;
     let r = Math.random() * 20 + 15;

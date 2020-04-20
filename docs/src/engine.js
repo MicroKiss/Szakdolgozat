@@ -1,13 +1,14 @@
 
 import Vector from "./Vector2D.js";
-import display from "./display.js";
+
 var engine = {
     lastTick: performance.now(),
     deltaTime: NaN,
-    PhysicsPrecision: 0.01, // 1/this is the number of physics simulations /secs
-    gravity: 9.8,
+    PhysicsPrecision: 0.001, // 1/this is the number of physics simulations /secs
+    gravity: 0.8 * 1000,//cus our screen is biiig
     friction: 0.9,//0.9
     index: NaN,
+    indexSize: 256,
     shapes: {
         CIRCLE: "circle",
         RECTANGLE: "rectangle",
@@ -124,7 +125,7 @@ engine.doEntitiesIntersect = function (first, second) {
 //terbeli indexeles
 engine.createIndex = function (entities, size) { //bin index készítés
     if (!size) {
-        size = 64;
+        size = engine.indexSize;
     }
     var grid = {};
     for (var i = 0; i < entities.length; i++) {
@@ -345,11 +346,11 @@ engine.squareBallCollision = function (square, ball) {
     //collision effect
     if (angle < engine.squareBallCollision.A || angle > engine.squareBallCollision.D)
         ball.vx *= -engine.friction
-    if (angle < engine.squareBallCollision.B && angle > engine.squareBallCollision.A)
+    else if (angle < engine.squareBallCollision.B && angle > engine.squareBallCollision.A)
         ball.vy *= -engine.friction
-    if (angle < engine.squareBallCollision.C && angle > engine.squareBallCollision.B)
+    else if (angle < engine.squareBallCollision.C && angle > engine.squareBallCollision.B)
         ball.vx *= -engine.friction
-    if (angle < engine.squareBallCollision.D && angle > engine.squareBallCollision.C)
+    else //if (angle < engine.squareBallCollision.D && angle > engine.squareBallCollision.C)
         ball.vy *= -engine.friction
 }
 engine.squareBallCollision.A = Math.PI / 4;
@@ -407,11 +408,11 @@ engine.rectBallCollision = function (rect, ball) {
     //collision effect
     if (angle < A || angle > D)
         ball.vx *= -engine.friction
-    if (angle < B && angle > A)
+    else if (angle < B && angle > A)
         ball.vy *= -engine.friction
-    if (angle < C && angle > B)
+    else if (angle < C && angle > B)
         ball.vx *= -engine.friction
-    if (angle < D && angle > C)
+    else //if (angle < D && angle > C)
         ball.vy *= -engine.friction
 }
 

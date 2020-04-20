@@ -16,7 +16,8 @@ export default class Ball extends engine.Entity {
 
 
     physicsUpdate(deltaTime) {
-        let gravityForce = this.mass * engine.gravity * deltaTime;
+        let gravityForce = /*this.mass **/ engine.gravity * deltaTime;
+
 
         this.ax = -this.vx * engine.friction;
         this.ay = -this.vy * engine.friction;
