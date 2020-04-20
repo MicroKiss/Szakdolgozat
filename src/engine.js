@@ -277,30 +277,30 @@ engine.squareBallOverlap = function (square, ball) {
     if (ball.y < top) {
         //around 'B' point
         if (ball.x < left)
-            return ball.r - Math.hypot(left - ball.x, top - ball.y);
+            return { overlap: ball.r - Math.hypot(left - ball.x, top - ball.y), where: "B" };
         //around 'A' point
         if (ball.x > right)
-            return ball.r - Math.hypot(right - ball.x, top - ball.y);
+            return { overlap: ball.r - Math.hypot(right - ball.x, top - ball.y), where: "A" };
         //directly above
-        return (square.getHeight() / 2 + ball.r) - (middle.y - ball.y);
+        return { overlap: (square.getHeight() / 2 + ball.r) - (middle.y - ball.y), where: "above" };
     }
     //ball is under the square
     if (ball.y > bottom) {
         //around 'C' point
         if (ball.x < left)
-            return ball.r - Math.hypot(left - ball.x, bottom - ball.y);
+            return { overlap: ball.r - Math.hypot(left - ball.x, bottom - ball.y), where: "C" };
         //around 'D' point
         if (ball.x > right)
-            return ball.r - Math.hypot(right - ball.x, bottom - ball.y);
+            return { overlap: ball.r - Math.hypot(right - ball.x, bottom - ball.y), where: "D" };
         //under it
-        return (square.getHeight() / 2 + ball.r) + (middle.y - ball.y);
+        return { overlap: (square.getHeight() / 2 + ball.r) + (middle.y - ball.y), where: "under" };
     }
     // one the sides
     //ball.y < bottom & ball.y > top
     if (ball.x < left)
-        return (square.getWidth() / 2 + ball.r) - (middle.x - ball.x);
+        return { overlap: (square.getWidth() / 2 + ball.r) - (middle.x - ball.x), where: "left" };
     if (ball.x > right)
-        return (square.getWidth() / 2 + ball.r) + (middle.x - ball.x);
+        return { overlap: (square.getWidth() / 2 + ball.r) + (middle.x - ball.x), where: "right" };
 
     return 0;
 }
@@ -322,9 +322,25 @@ engine.squareBallCollision = function (square, ball) {
     let angle = Math.PI - Math.atan2(y, x);
 
     //static displacing
-    let overlap = engine.squareBallOverlap(square, ball);
-    ball.x += Math.cos(angle) * overlap;
-    ball.y += -Math.sin(angle) * overlap;
+    let { overlap, where } = engine.squareBallOverlap(square, ball);
+
+    if (where == "under") {
+        ball.y += overlap;
+    }
+    else if (where == "above") {
+        ball.y -= overlap;
+    }
+    else if (where == "right") {
+        ball.x += overlap;
+    }
+    else if (where == "left") {
+        ball.x -= overlap;
+    }
+    else { // around the corners
+        ball.x += Math.cos(angle) * overlap;
+        ball.y -= Math.sin(angle) * overlap;
+    }
+    //~static displacing
 
     //collision effect
     if (angle < engine.squareBallCollision.A || angle > engine.squareBallCollision.D)
@@ -360,9 +376,25 @@ engine.rectBallCollision = function (rect, ball) {
     let angle = Math.PI - Math.atan2(y - ball.y, x - ball.x);
 
     //static displacing
-    let overlap = engine.rectBallOverlap(rect, ball);
-    ball.x += Math.cos(angle) * overlap;
-    ball.y -= Math.sin(angle) * overlap;
+    let { overlap, where } = engine.rectBallOverlap(rect, ball);
+
+    if (where == "under") {
+        ball.y += overlap;
+    }
+    else if (where == "above") {
+        ball.y -= overlap;
+    }
+    else if (where == "right") {
+        ball.x += overlap;
+    }
+    else if (where == "left") {
+        ball.x -= overlap;
+    }
+    else { // around the corners
+        ball.x += Math.cos(angle) * overlap;
+        ball.y -= Math.sin(angle) * overlap;
+    }
+    //~static displacing
 
     let corners = rect.getCorners();
 

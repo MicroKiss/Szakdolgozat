@@ -81,7 +81,7 @@ for (let index = 0; index < canvas.width / wall_width; index++) {
 
 wall = new RoundedWall(0, 0, 500, 700, 10);
 entities.push(wall);
-wall = new Wall(canvas.width / 2 - 30, canvas.height / 2 - 30, 300, 40);
+wall = new Wall(canvas.width / 2 - 30, canvas.height / 2 - 30, 200, 50);
 entities.push(wall);
 
 
