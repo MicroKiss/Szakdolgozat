@@ -32,7 +32,6 @@ export default class Wall extends engine.Entity {
               ****
             C       D
         */
-
         let A = { x: this.getLeft() + this.getWidth(), y: this.getTop() };
         let B = { x: this.getLeft(), y: this.getTop() };
         let C = { x: this.getLeft(), y: this.getTop() + this.getHeight() };

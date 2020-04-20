@@ -344,13 +344,13 @@ engine.squareBallCollision = function (square, ball) {
     //~static displacing
 
     //collision effect
-    if (angle < engine.squareBallCollision.A || angle > engine.squareBallCollision.D)
+    if (angle <= engine.squareBallCollision.A || angle > engine.squareBallCollision.D)
         ball.vx *= -engine.friction
-    else if (angle < engine.squareBallCollision.B && angle > engine.squareBallCollision.A)
+    else if (angle <= engine.squareBallCollision.B && angle > engine.squareBallCollision.A)
         ball.vy *= -engine.friction
-    else if (angle < engine.squareBallCollision.C && angle > engine.squareBallCollision.B)
+    else if (angle <= engine.squareBallCollision.C && angle > engine.squareBallCollision.B)
         ball.vx *= -engine.friction
-    else //if (angle < engine.squareBallCollision.D && angle > engine.squareBallCollision.C)
+    else //if (angle <= engine.squareBallCollision.D && angle > engine.squareBallCollision.C)
         ball.vy *= -engine.friction
 }
 engine.squareBallCollision.A = Math.PI / 4;
@@ -406,17 +406,17 @@ engine.rectBallCollision = function (rect, ball) {
 
 
     //collision effect
-    if (angle < A || angle > D)
+    if (angle <= A || angle > D)
         ball.vx *= -engine.friction
-    else if (angle < B && angle > A)
+    else if (angle <= B && angle > A)
         ball.vy *= -engine.friction
-    else if (angle < C && angle > B)
+    else if (angle <= C && angle > B)
         ball.vx *= -engine.friction
-    else //if (angle < D && angle > C)
+    else //if (angle <= D && angle > C)
         ball.vy *= -engine.friction
 }
 
-
+// from javidx
 engine.roundRectBallCollision = function (rect, ball) {
 
     // Check that line formed by velocity vector, intersects with line segment
@@ -447,12 +447,9 @@ engine.roundRectBallCollision = function (rect, ball) {
     // Calculate displacement required
     let fOverlap = 1 * (fDistance - ball.r - rect.r);
 
-
     // Displace Current Ball away from collision
     ball.x -= fOverlap * (ball.x - fClosestPointX) / fDistance;
     ball.y -= fOverlap * (ball.y - fClosestPointY) / fDistance;
-
-
 }
 
 engine.simulatePhysics = function (entities) {
@@ -475,12 +472,8 @@ engine.simulatePhysics = function (entities) {
             others.forEach(other => {
                 engine.handleCollision(entity, other);
             });
-            //csinaljanak dolgokat
         }
-
     }
-
-
 };
 
 
