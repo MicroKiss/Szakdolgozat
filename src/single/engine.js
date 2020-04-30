@@ -1,10 +1,10 @@
 
 import Vector from "./Vector2D.js";
-
+import global from "./globals.js"
 var engine = {
     lastTick: performance.now(),
     deltaTime: NaN,
-    PhysicsPrecision: 0.001, // 1/this is the number of physics simulations /secs
+    PhysicsPrecision: 1 / global.PhysicsPrecision, // 1/this is the number of physics simulations /secs
     gravity: 0.8 * 1000,//cus our screen is biiig
     friction: 0.9,//0.9
     index: NaN,
@@ -455,6 +455,7 @@ engine.roundRectBallCollision = function (rect, ball) {
 engine.simulatePhysics = function (entities) {
     let now = performance.now();
     engine.deltaTime = (now - engine.lastTick) / 1000;
+    global.deltaTime = (now - engine.lastTick) / 1000;
     engine.lastTick = now;
 
     // this way there is always a given number of phisycs updates in a second
@@ -518,9 +519,6 @@ engine.Entity = class Entity {
     }
 
     physicsUpdate() {
-    }
-
-    draw() {
     }
 
     getLeft() {

@@ -10,7 +10,7 @@ export default class Wall extends engine.Entity {
         if (this.width === this.height)
             this.shape = engine.shapes.SQUARE;
         this.mass = Infinity;
-        this.color = "#" + ((1 << 24) * Math.random() | 0).toString(16);
+        this.color = "gray";//"#" + ((1 << 24) * Math.random() | 0).toString(16);
     }
 
 
