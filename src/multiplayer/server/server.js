@@ -1,59 +1,62 @@
 //szerver
 var ws = require('ws');
+const global = require('./globals.js');
+const engine = require('./engine.js');
+const mapLoader = require('./mapLoader.js');
+
+const Ball = require('./Ball.js');
 
 
+let Map = new mapLoader();
 
-let world = new Set([
-    {x:10,y:10},
-    {x: 200, y:50}
-]);
-
-var wss = new ws.Server({port: 12345, host: '127.0.0.1'});
+var wss = new ws.Server({ port: 12345, host: '127.0.0.1' });
 console.log('Server is running');
 
 wss.on('connection', function (connection) {
-    let id = 0;
-   console.log('valaki belépett!');
-   const player = {x: Math.random()*700, y: Math.random()*500};
-   world.add(player);
+    console.log('valaki belépett!');
 
-   connection.on('close', function () {
-       world.delete(player);
-       clearInterval(timer);
-   });
+    connection.on('close', function () {
+        console.log("someone left");
 
-   connection.on('message', function (message) {
-       const command = JSON.parse(message);
-       id = command.id;
-        const key = command.key;
+        clearInterval(timer);
+    });
 
-        switch(key){
-            case 37:
-                player.x-=5;
+    connection.on('message', function (message) {
+        event = JSON.parse(message);
+        switch (event.command) {
+            case "click":
+                global.entities.push(new Ball(event.x, event.y, global.ballRadius));
                 break;
-            case 38:
-                player.y-=10;
-                break;
-            case 39:
-                player.x+=10;
-                break;
-            case 40:
-                player.y+=10;
+
+            default:
                 break;
         }
-   });
 
-   const timer = setInterval(()=>{
-       try{
-        const worldArray = Array.from(world);
-        connection.send(JSON.stringify({
-            id: id,
-            world:worldArray,
-            playerIndex: worldArray.indexOf(player)
-        }));
-       }catch(e){
-        console.log('error');
-       }
-   }, 1);
+    });
+    //csak egyzser csatlakozaskor kuldi
+    connection.send(JSON.stringify({ type: "maplayout", body: global.entities }));
+
+    const timer = setInterval(() => {
+        try {
+            connection.send(JSON.stringify({ type: "dynamic", body: global.entities.filter(e => e.shape == "circle") }));
+        } catch (e) {
+            console.log('error');
+        }
+    }, 10);
 
 });
+
+
+
+function main() {
+    engine.simulatePhysics(global.entities);
+
+}
+
+
+function run() {
+    setInterval(main, 10);
+};
+
+
+run();
