@@ -1,121 +1,138 @@
 //szerver
 var ws = require('ws');
+
 const global = require('./globals.js');
-const engine = require('./engine.js');
-const mapLoader = require('./mapLoader.js');
 
 const Ball = require('./Ball.js');
 const Portal = require('./Portal.js');
 const Wall = require('./Wall.js');
 
-let Map = new mapLoader();
 
-var wss = new ws.Server({ port: 80, host: 'localhost' });
-console.log('Server is running');
+var connections = [];
+class Server {
+    constructor(ip, port) {
+        this.ws = new ws.Server({ port: port, host: ip });
+        console.log("server is running");
 
-const connections = [];
-wss.on('connection', function (connection) {
-    connections.push(connection);
-    console.log('valaki belépett!');
+        this.ws.on('connection', function (connection) {
+            connections.push(connection);
+            console.log('valaki belépett!');
 
-    connection.on('close', function () {
-        console.log("someone left");
-        let index = connections.indexOf(connection);
-        if (index > -1)
-            connections.splice(index, 1);
+            connection.on('close', function () {
+                console.log("someone left");
+                let index = connections.indexOf(connection);
+                if (index > -1)
+                    connections.splice(index, 1);
 
-        clearInterval(timer);
-    });
+                clearInterval(timer);
+            });
 
-    connection.on('message', function (message) {
-        message = JSON.parse(message);
-        console.log(message);
+            connection.on('message', function (message) {
+                message = JSON.parse(message);
+                console.log("message: ", message);
 
-        switch (message.command) {
-            case "create":
-                let newEntity;
-                switch (message.type) {
-                    case "Ball":
-                        newEntity = new Ball(message.body.x, message.body.y, global.ballRadius)
-                        global.entities.push(newEntity);
-                        break;
-                    case "Portal":
-                        global.entities.forEach(e => {
-                            if (e instanceof Wall) {
+                switch (message.command) {
+                    case "create":
+                        let newEntity;
+                        switch (message.type) {
+                            case "Ball":
+                                newEntity = new Ball(message.body.x, message.body.y, global.ballRadius)
+                                break;
+                            case "Portal":
+                                global.entities.forEach(e => {
+                                    if (e instanceof Wall) {
+                                        let center = e.getCenter();
+                                        let Distance = Math.sqrt(
+                                            Math.pow(center.x - message.body.x, 2) + Math.pow(center.y - message.body.y, 2));
+
+                                        if (Distance < global.gridSize / 2) {
+                                            //create new portal
+                                            newEntity = new Portal(e.x, e.y, e.width, message.body.color);
+
+                                            if (newEntity.color == "red") {
+                                                if (global.redPortal) {
+                                                    let index = global.entities.indexOf(global.redPortal);
+                                                    global.entities.splice(index, 1);
+                                                    Server.prototype.sendRemoveByID(connections, global.redPortal.id)
+                                                    let newWall = new Wall(global.redPortal.x, global.redPortal.y, global.gridSize);
+                                                    global.entities.push(newWall);
+                                                    Server.prototype.sendCreate(connections, newWall);
+                                                }
+                                                global.redPortal = newEntity;
+                                            }
+                                            else if (newEntity.color == "blue") {
+                                                if (global.bluePortal) {
+                                                    let index = global.entities.indexOf(global.bluePortal);
+                                                    global.entities.splice(index, 1);
+                                                    Server.prototype.sendRemoveByID(connections, global.bluePortal.id)
+                                                    let newWall = new Wall(global.bluePortal.x, global.bluePortal.y, global.gridSize);
+                                                    global.entities.push(newWall);
+                                                    Server.prototype.sendCreate(connections, newWall);
+                                                }
+                                                global.bluePortal = newEntity;
+                                            }
+                                            //remove wall from under it
+                                            let index = global.entities.indexOf(e);
+                                            global.entities.splice(index, 1);
 
 
-                                let center = e.getCenter();
-                                let Distance = Math.sqrt(
-                                    Math.pow(center.x - message.body.x, 2) + Math.pow(center.y - message.body.y, 2));
+                                            Server.prototype.sendRemoveByID(connections, e.id)
 
-                                if (Distance < global.gridSize / 2) {
-                                    //replace this wall with a portal
-                                    newEntity = new Portal(e.x, e.y, e.width);
-                                    global.entities.push(newEntity);
-                                    let index = global.entities.indexOf(e);
-                                    if (index > -1)
-                                        global.entities.splice(index, 1);
+                                            return false;
+                                        }
+                                    }
+                                })
+                                break;
 
-                                    connections.forEach(conn => {
-                                        conn.send(JSON.stringify({ command: "remove", id: e.id }));
-                                    })
+                            default:
+                                break;
+                        }
 
-                                    return false;
-                                }
-                            }
-                        })
-                        break;
+                        if (newEntity) {
+                            global.entities.push(newEntity);
+                            Server.prototype.sendCreate(connections, newEntity);
+                        }
+
 
                     default:
                         break;
                 }
-                console.log(newEntity);
 
-                if (newEntity)
-                    connections.forEach(conn => {
-                        conn.send(JSON.stringify({ command: "create", type: newEntity.constructor.name, body: newEntity }));
-                    })
-
-
-
-            default:
-                break;
-        }
-
-    });
-    //csak egyszer csatlakozaskor kuldi
-    global.entities.forEach(entity => {
-        connection.send(JSON.stringify({ command: "create", type: entity.constructor.name, body: entity }));
-    })
-
-    const timer = setInterval(() => {
-        try {
-            global.entities.filter(e => (e instanceof Ball)).forEach(entity => {
-
-                connection.send(JSON.stringify({ command: "move", id: entity.id, body: { y: entity.y, x: entity.x } }));
+            });
+            //csak egyszer csatlakozaskor kuldi
+            global.entities.forEach(entity => {
+                Server.prototype.sendCreate([connection], entity);
             })
-        } catch (e) {
-            //it's left before we could send this
-            let index = connections.indexOf(connection);
-            if (index > -1)
-                connections.splice(index, 1);
 
-        }
-    }, 30);
+            const timer = setInterval(() => {
+                try {
+                    global.entities.filter(e => (e instanceof Ball)).forEach(entity => {
+                        connection.send(JSON.stringify({ command: "move", id: entity.id, body: { y: entity.y, x: entity.x } }));
+                    })
+                } catch (e) {
+                    //it's left before we could send this
+                    let index = connections.indexOf(connection);
+                    if (index > -1)
+                        connections.splice(index, 1);
 
-});
+                }
+            }, 30);
+
+        });
+    }
 
 
-
-function main() {
-    engine.simulatePhysics(global.entities);
-
+}
+Server.prototype.sendRemoveByID = function (conns, id) {
+    conns.forEach(conn => {
+        conn.send(JSON.stringify({ command: "remove", id: id }));
+    })
+}
+Server.prototype.sendCreate = function (conns, entity) {
+    conns.forEach(conn => {
+        conn.send(JSON.stringify({ command: "create", type: entity.constructor.name, body: { id: entity.id, x: entity.x, y: entity.y, color: entity.color, width: entity.width, r: entity.r } }));
+    })
 }
 
 
-function run() {
-    setInterval(main, 30);
-};
-
-
-run();
+module.exports = Server;

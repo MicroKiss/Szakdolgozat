@@ -1,14 +1,50 @@
 const engine = require('./engine.js');
-
+const Ball = require('./Ball.js');
+const global = require('./globals.js');
 
 
 class Portal extends engine.Entity {
 
-    constructor(x, y, w, h = w) {
-        super(x, y, w, h, engine.shapes.RECTANGLE);
-        if (this.width === this.height)
-            this.shape = engine.shapes.SQUARE;
-        this.color = "blue";//"#" + ((1 << 24) * Math.random() | 0).toString(16);
+    constructor(x, y, w, color) {
+        super(x, y, w, w);
+        this.color = color;//"#" + ((1 << 24) * Math.random() | 0).toString(16);
+        this.shape = engine.shapes.PORTAL;
+
+        this.portalRect = { x: this.x + 15, y: this.y + 15, width: this.width - 30, height: this.height - 30 };
+        this.targetPortal = null;
+
+        if (this.color == "red" && global.bluePortal)
+            this.setTargetPortal(global.bluePortal);
+        else if (this.color == "blue" && global.redPortal)
+            this.setTargetPortal(global.redPortal);
+    }
+
+    setTargetPortal(p) {
+        this.targetPortal = p;
+        p.targetPortal = this;
+    }
+
+    physicsUpdate(deltaTime) {
+
+        if (!this.targetPortal)
+            return;
+
+
+        const others = engine.index.query(this);
+
+        others.forEach(other => {
+
+            if (other instanceof Ball) {
+                if (engine.rectCircleColliding(this.portalRect, { x: other.x, y: other.y, r: 1 })) {
+                    let dir = other.getDir();
+
+                    other.x = this.targetPortal.getCenter().x + dir.x * 20;
+                    other.y = this.targetPortal.getCenter().y + dir.y * 20;
+                }
+            }
+
+        });
+
     }
 
 

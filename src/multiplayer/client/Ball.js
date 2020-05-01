@@ -1,35 +1,11 @@
-import engine from "./engine.js";
 
+export default class Ball {
 
-export default class Ball extends engine.Entity {
-
-    constructor(x, y, r, vx, vy) {
-        super(x, y, 2 * r, 2 * r, engine.shapes.CIRCLE);
+    constructor(x, y, r) {
+        this.x = x;
+        this.y = y;
         this.r = r;
-        this.mass = ((this.r / 5) ** 2) * Math.PI;
-
-        this.vx = vx | 0;
-        this.vy = vy | 0;
-        this.color = "red";//"#" + ((1 << 24) * Math.random() | 0).toString(16);
-    }
-
-
-    physicsUpdate(deltaTime) {
-        let gravityForce = /*this.mass **/ engine.gravity * deltaTime;
-
-
-        this.ax = -this.vx * engine.friction;
-        this.ay = -this.vy * engine.friction;
-        this.vx += this.ax * deltaTime;
-        this.vy += this.ay * deltaTime + gravityForce;
-        this.x += this.vx * deltaTime;
-        this.y += this.vy * deltaTime;
-
-        if (Math.abs(this.vx) < 0.01)
-            this.vx = 0
-        if (Math.abs(this.vy) < 0.01)
-            this.vy = 0
-
+        this.color = "yellow";
     }
 
     draw(ctx) {
@@ -45,19 +21,4 @@ export default class Ball extends engine.Entity {
     }
 
 
-    getLeft() {
-        return this.x - this.r;
-    }
-
-    getTop() {
-        return this.y - this.r;
-    }
-
-    getWidth() {
-        return this.r * 2;
-    }
-
-    getHeight() {
-        return this.getWidth();
-    }
 }

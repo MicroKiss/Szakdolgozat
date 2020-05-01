@@ -1,14 +1,14 @@
-import engine from "./engine.js";
 
 
 
-export default class Portal extends engine.Entity {
+export default class Portal {
 
     constructor(x, y, w, h = w) {
-        super(x, y, w, h, engine.shapes.RECTANGLE);
-        if (this.width === this.height)
-            this.shape = engine.shapes.SQUARE;
-        this.color = "blue";//"#" + ((1 << 24) * Math.random() | 0).toString(16);
+        this.x = x;
+        this.y = y;
+        this.width = w;
+        this.height = h;
+        this.color = null;
     }
 
 

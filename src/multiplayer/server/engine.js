@@ -1,20 +1,23 @@
 
 const Vector = require('./Vector2D.js');
 const global = require('./globals.js');
+
 var performanceNow = require("./node_modules/performance-now")
+
 var engine = {
     lastTick: performanceNow(),
     deltaTime: 0.1,
     PhysicsPrecision: 1 / global.PhysicsPrecision, // 1/this is the number of physics simulations /secs
     gravity: 0.8 * 1000,//cus our screen is biiig
     friction: 0.9,//0.9
-    index: NaN,
+    index: {},
     indexSize: 256,
     shapes: {
         CIRCLE: "circle",
         RECTANGLE: "rectangle",
         ROUNDRECTANGLE: "roundrectangle",
         SQUARE: "square",
+        PORTAL: "portal",
     },
 
 };
@@ -99,18 +102,21 @@ engine.doEntitiesIntersect = function (first, second) {
 
     if ((first.shape == engine.shapes.SQUARE || first.shape == engine.shapes.RECTANGLE) && second.shape == engine.shapes.CIRCLE)
         return engine.rectCircleColliding(first, second);
-    if ((second.shape == engine.shapes.SQUARE || second.shape == engine.shapes.RECTANGLE) && first.shape == engine.shapes.CIRCLE)
-        return engine.rectCircleColliding(second, first);
+    // if ((second.shape == engine.shapes.SQUARE || second.shape == engine.shapes.RECTANGLE) && first.shape == engine.shapes.CIRCLE)
+    //     return engine.rectCircleColliding(second, first);
 
     if (first.shape == engine.shapes.ROUNDRECTANGLE && second.shape == engine.shapes.CIRCLE)
         return engine.roundRectCircleIntersect(first, second);
-    if (second.shape == engine.shapes.ROUNDRECTANGLE && first.shape == engine.shapes.CIRCLE)
-        return engine.roundRectCircleIntersect(second, first);
+    // if (second.shape == engine.shapes.ROUNDRECTANGLE && first.shape == engine.shapes.CIRCLE)
+    //     return engine.roundRectCircleIntersect(second, first);
+
+    if ((first.shape == engine.shapes.PORTAL || first.shape == engine.shapes.RECTANGLE) && second.shape == engine.shapes.CIRCLE)
+        return engine.rectCircleColliding(first, second);
 
     return false;
 }
 
-//terbeli indexeles
+//térbeli indexeles
 engine.createIndex = function (entities, size) { //bin index készítés
     if (!size) {
         size = engine.indexSize;
@@ -186,16 +192,17 @@ engine.createIndex = function (entities, size) { //bin index készítés
 
 engine.handleCollision = function (first, second) {
 
+
     if (first.shape == engine.shapes.CIRCLE && second.shape == first.shape) {
         engine.ballBallCollision(first, second);
     }
-    if (first.shape == engine.shapes.RECTANGLE && second.shape == engine.shapes.CIRCLE) {
+    else if (first.shape == engine.shapes.RECTANGLE && second.shape == engine.shapes.CIRCLE) {
         engine.rectBallCollision(first, second)
     }
-    if (first.shape == engine.shapes.SQUARE && second.shape == engine.shapes.CIRCLE) {
+    else if (first.shape == engine.shapes.SQUARE && second.shape == engine.shapes.CIRCLE) {
         engine.squareBallCollision(first, second)
     }
-    if (first.shape == engine.shapes.ROUNDRECTANGLE && second.shape == engine.shapes.CIRCLE) {
+    else if (first.shape == engine.shapes.ROUNDRECTANGLE && second.shape == engine.shapes.CIRCLE) {
         engine.roundRectBallCollision(first, second)
     }
 
@@ -291,7 +298,7 @@ engine.squareBallOverlap = function (square, ball) {
     if (ball.x > right)
         return { overlap: (square.getWidth() / 2 + ball.r) + (middle.x - ball.x), where: "right" };
 
-    return 0;
+    return 1;
 }
 
 
@@ -451,13 +458,13 @@ engine.simulatePhysics = function (entities) {
 
     for (let i = 0; i < loopindex; i++) {
         let deltatime = engine.deltaTime / loopindex;
-        let index = engine.createIndex(entities);
+        engine.index = engine.createIndex(entities);
 
         for (let entity of entities) {
             //csak a ra vonatkozo dolgok
             entity.physicsUpdate(deltatime);
             //utkozesek
-            const others = index.query(entity);
+            const others = engine.index.query(entity);
             others.forEach(other => {
                 engine.handleCollision(entity, other);
             });
@@ -482,12 +489,10 @@ engine.place_meeting = function (x, y, w, h, obj) {
 };
 
 engine.Entity = class Entity {
-    constructor(x, y, w, h, shape) {
+    constructor(x, y, w, h, shape = engine.shapes.SQUARE) {
         this.id = global.objID;
         global.objID++;
-        if (!shape) {
-            shape = engine.shapes.SQUARE;
-        }
+
         this.x = x;
         this.y = y;
         this.mass = w * h;
