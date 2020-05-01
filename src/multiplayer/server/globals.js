@@ -6,4 +6,5 @@ module.exports = {
     dynamicObjects: [],
     gridSize: 64,
     ballRadius: 20,
+    objID: 0,
 };

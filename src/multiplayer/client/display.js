@@ -13,12 +13,7 @@ display.drawBackground = function () {
 }
 
 display.drawGUI = function () {
-    ///fps
-    display.ctx.font = "30px Arial";
-    display.ctx.fillStyle = "red";
-    display.ctx.textAlign = "center";
-    display.ctx.fillText("fps: " + (1 / global.deltaTime).toFixed(2), display.canvas.width - 100, 50);
-    display.ctx.fillText("physics simulation per sec: " + global.PhysicsPrecision, display.canvas.width - 220, 100);
+
 
 }
 

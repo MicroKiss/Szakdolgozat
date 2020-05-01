@@ -4,57 +4,56 @@ import global from "./globals.js";
 import engine from "./engine.js";
 import Ball from "./Ball.js";
 import Wall from "./Wall.js";
+import Portal from "./Portal.js";
 import display from "./display.js";
 import RoundedWall from "./Wall2.js"
 import gameLogic from "./gameLogic.js"
 import mapLoader from "./mapLoader.js"
 
 
-var ws = new WebSocket('ws://localhost:12345');
+var ws = new WebSocket('ws://localhost:80');
 ws.onmessage = function (event) {
 
 
-    const state = JSON.parse(event.data);
-    switch (state.type) {
-        case "maplayout":
+    const message = JSON.parse(event.data);
+    switch (message.command) {
+        case "create":
+            console.log(message);
 
-            global.entities = [];
-            state.body.forEach(msg => {
-                let obj;
-                switch (msg.shape) {
-                    case "square":
-                        obj = new Wall(msg.x, msg.y, msg.width);
-                        global.entities.push(obj)
-                        break;
-                    case "circle":
-                        obj = new Ball(msg.x, msg.y, msg.r);
-                        global.entities.push(obj)
-                        break;
+            let obj;
+            switch (message.type) {
+                case "Wall":
+                    obj = new Wall(message.body.x, message.body.y, message.body.width);
+                    obj.id = message.body.id;
+                    global.entities.push(obj)
+                    break;
+                case "Ball":
+                    obj = new Ball(message.body.x, message.body.y, message.body.r);
+                    obj.id = message.body.id;
+                    global.entities.push(obj)
+                    break;
+                case "Portal":
+                    obj = new Portal(message.body.x, message.body.y, message.body.width);
+                    obj.id = message.body.id;
+                    global.entities.push(obj)
+                    break;
 
-                    default:
-                        break;
-                }
-            });
+                default:
+                    break;
+            }
+
             break;
-        case "dynamic":
-            global.entities = global.entities.filter(ent => ent.shape != "circle");
-            state.body.forEach(msg => {
+        case "move":
+            let current = global.entities.find(e => { return e.id == message.id });
+            current.x = message.body.x;
+            current.y = message.body.y;
+            break;
+        case "remove":
+            console.log(message);
 
-                let obj;
-                switch (msg.shape) {
-                    case "square":
-                        obj = new Wall(msg.x, msg.y, msg.width);
-                        global.entities.push(obj)
-                        break;
-                    case "circle":
-                        obj = new Ball(msg.x, msg.y, msg.r);
-                        global.entities.push(obj)
-                        break;
-
-                    default:
-                        break;
-                }
-            });
+            let index = global.entities.indexOf(global.entities.find(e => { return e.id == message.id }));
+            if (index > -1)
+                global.entities.splice(index, 1);
             break;
 
         default:
@@ -90,10 +89,13 @@ document.onmousedown = function (e) {
     e.preventDefault();
 
 
-    if (e.button === 2 || e.button === 0) {
+    if (e.button === 2) {
 
-        ws.send(JSON.stringify({ command: 'click', x: mouseX, y: mouseY }));
+        ws.send(JSON.stringify({ command: 'create', type: Portal.name, body: { x: mouseX, y: mouseY } }));
 
+    }
+    else if (e.button === 0) {
+        ws.send(JSON.stringify({ command: 'create', type: Ball.name, body: { x: mouseX, y: mouseY } }));
     }
 }
 

@@ -483,6 +483,8 @@ engine.place_meeting = function (x, y, w, h, obj) {
 
 engine.Entity = class Entity {
     constructor(x, y, w, h, shape) {
+        this.id = global.objID;
+        global.objID++;
         if (!shape) {
             shape = engine.shapes.SQUARE;
         }

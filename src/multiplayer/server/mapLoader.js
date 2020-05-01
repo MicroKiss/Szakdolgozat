@@ -43,15 +43,17 @@ class mapLoader {
                 if (!type) {
                     continue;
                 }
+                let obj;
                 switch (type) {
                     case Ball:
-                        global.entities.push(new type(j * global.gridSize, i * global.gridSize, global.ballRadius));
+                        obj = new type(j * global.gridSize, i * global.gridSize, global.ballRadius);
                         break;
 
                     default:
-                        global.entities.push(new type(j * global.gridSize, i * global.gridSize, global.gridSize));
+                        obj = new type(j * global.gridSize, i * global.gridSize, global.gridSize);
                         break;
                 }
+                global.entities.push(obj)
 
             }
         }

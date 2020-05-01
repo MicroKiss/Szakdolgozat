@@ -4,5 +4,4 @@ export default {
     entities: [],
     gridSize: 64,
     ballRadius: 20,
-
 };
