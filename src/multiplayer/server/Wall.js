@@ -20,9 +20,7 @@ class Wall extends engine.Entity {
         //tmp
 
     }
-    getCenter() {
-        return { x: this.x + this.getWidth() / 2, y: this.y + this.getHeight() / 2 };
-    }
+
 
     getCorners() {
         /*  

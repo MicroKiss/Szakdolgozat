@@ -9,4 +9,5 @@ module.exports = {
     objID: 0,
     redPortal: null,
     bluePortal: null,
+    ws: null,
 };

@@ -8,15 +8,13 @@ import display from "./display.js";
 import gameLogic from "./gameLogic.js"
 
 
-var ws = new WebSocket('ws://192.168.0.106:80');
-ws.onmessage = function (event) {
+global.ws = new WebSocket('ws://192.168.0.106:80');
+global.ws.onmessage = function (event) {
 
 
     const message = JSON.parse(event.data);
     switch (message.command) {
         case "create":
-            console.log(message);
-
             let obj;
             switch (message.type) {
                 case "Wall":
@@ -47,7 +45,6 @@ ws.onmessage = function (event) {
             current.y = message.body.y;
             break;
         case "remove":
-            console.log(message);
 
             let index = global.entities.indexOf(global.entities.find(e => { return e.id == message.id }));
             if (index > -1)
@@ -64,41 +61,7 @@ ws.onmessage = function (event) {
 
 
 
-const canvas = document.getElementById('canvas');
 
-
-//npx http-server -c-1
-
-
-
-canvas.width = innerWidth - 10;
-canvas.height = innerHeight - 20;
-
-var mouseX = 0;
-var mouseY = 0;
-document.onmousemove = (e) => {
-
-    var rect = canvas.getBoundingClientRect();
-    mouseX = e.clientX - rect.left;
-    mouseY = e.clientY - rect.top;
-
-}
-document.onmousedown = function (e) {
-    e.preventDefault();
-
-
-    if (e.button === 2) {
-
-        ws.send(JSON.stringify({ command: 'create', type: Portal.name, body: { x: mouseX, y: mouseY, color: "blue" } }));
-
-    }
-    else if (e.button === 0) {
-        ws.send(JSON.stringify({ command: 'create', type: Portal.name, body: { x: mouseX, y: mouseY, color: "red" } }));
-    }
-    else if (e.button === 1) {
-        ws.send(JSON.stringify({ command: 'create', type: Ball.name, body: { x: mouseX, y: mouseY } }));
-    }
-}
 
 
 

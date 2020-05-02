@@ -94,13 +94,19 @@ engine.doEntitiesIntersect = function (first, second) {
 
 
     if (first.shape == second.shape) {
-        if (first.shape == engine.shapes.RECTANGLE || first.shape == engine.shapes.SQUARE)
+        if (first.shape == engine.shapes.RECTANGLE || first.shape == engine.shapes.SQUARE || first.shape == engine.shapes.PORTAL)
             return engine.rectangleIntersect(first.x, first.y, first.width, first.height, second.x, second.y, second.width, second.height);
         if (first.shape == engine.shapes.CIRCLE)
             return engine.circleIntersect(first.x, first.y, first.r, second.x, second.y, second.r);
     }
 
-    if ((first.shape == engine.shapes.SQUARE || first.shape == engine.shapes.RECTANGLE) && second.shape == engine.shapes.CIRCLE)
+
+    if ((first.shape == engine.shapes.RECTANGLE || first.shape == engine.shapes.SQUARE || first.shape == engine.shapes.PORTAL) && (second.shape == engine.shapes.RECTANGLE || second.shape == engine.shapes.SQUARE || second.shape == engine.shapes.PORTAL))
+        return engine.rectangleIntersect(first.x, first.y, first.width, first.height, second.x, second.y, second.width, second.height);
+
+
+
+    if ((first.shape == engine.shapes.SQUARE || first.shape == engine.shapes.RECTANGLE || first.shape == engine.shapes.PORTAL) && second.shape == engine.shapes.CIRCLE)
         return engine.rectCircleColliding(first, second);
     // if ((second.shape == engine.shapes.SQUARE || second.shape == engine.shapes.RECTANGLE) && first.shape == engine.shapes.CIRCLE)
     //     return engine.rectCircleColliding(second, first);
@@ -109,9 +115,6 @@ engine.doEntitiesIntersect = function (first, second) {
         return engine.roundRectCircleIntersect(first, second);
     // if (second.shape == engine.shapes.ROUNDRECTANGLE && first.shape == engine.shapes.CIRCLE)
     //     return engine.roundRectCircleIntersect(second, first);
-
-    if ((first.shape == engine.shapes.PORTAL || first.shape == engine.shapes.RECTANGLE) && second.shape == engine.shapes.CIRCLE)
-        return engine.rectCircleColliding(first, second);
 
     return false;
 }
@@ -211,8 +214,7 @@ engine.handleCollision = function (first, second) {
 engine.ballBallCollision = function (ball, target) {
     if (ball === target)
         return;
-    let Distance = Math.sqrt(
-        Math.pow(ball.x - target.x, 2) + Math.pow(ball.y - target.y, 2));
+    let Distance = Math.hypot(ball.x - target.x, ball.y - target.y);
 
     //Static collision
     let Overlap = 0.5 * (Distance - ball.r - target.r);
@@ -475,18 +477,40 @@ engine.simulatePhysics = function (entities) {
 
 engine.place_meeting = function (x, y, w, h, obj) {
 
-    const entities = gameContext.index.query(new engine.Entity(
+    let friend = false;
+    const entities = engine.index.query(new engine.Entity(
         x,
         y,
         w,
         h)
     );
 
-    for (let entity of entities)
-        if (entity instanceof obj && entity != this)
-            return true;
-    return false;
+    for (let entity of entities) {
+
+        if (entity.constructor.name == obj.name) {
+            friend = entity;
+            break;
+        }
+    }
+
+    return friend;
 };
+
+engine.nearest = function (x, y, obj) {
+    let closest = null;
+    let distance = Infinity;
+    for (let i = 0; i < global.entities.length; i++) {
+        const element = global.entities[i];
+        if (typeof (element) == obj) {
+            let currDistance = Math.hypot(element.getCenter().x - x, element.getCenter().y - y);
+            if (currDistance < distance) {
+                closest = element;
+                distance = currDistance;
+            }
+        }
+    }
+    return closest;
+}
 
 engine.Entity = class Entity {
     constructor(x, y, w, h, shape = engine.shapes.SQUARE) {
@@ -506,8 +530,13 @@ engine.Entity = class Entity {
         this.shape = shape;
     }
     getDir() {
-        let vdist = Math.sqrt(this.vx ** 2 + this.vy ** 2);
+        let vdist = Math.hypot(this.vx, this.vy);
+        if (this.vx == this.vy && this.vx == 0)
+            return { x: 0, y: 1 };
         return { x: this.vx / vdist, y: this.vy / vdist }
+    }
+    getCenter() {
+        return { x: this.x + this.getWidth() / 2, y: this.y + this.getHeight() / 2 };
     }
 
     update() {

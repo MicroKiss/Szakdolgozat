@@ -2,6 +2,7 @@
 var ws = require('ws');
 
 const global = require('./globals.js');
+const engine = require('./engine.js');
 
 const Ball = require('./Ball.js');
 const Portal = require('./Portal.js');
@@ -29,7 +30,7 @@ class Server {
 
             connection.on('message', function (message) {
                 message = JSON.parse(message);
-                console.log("message: ", message);
+
 
                 switch (message.command) {
                     case "create":
@@ -47,6 +48,11 @@ class Server {
 
                                         if (Distance < global.gridSize / 2) {
                                             //create new portal
+
+                                            //you can't stack portals
+                                            if (engine.place_meeting(e.x - 10, e.y - 10, e.getWidth() + 20, e.getHeight() + 20, Portal))
+                                                return;
+
                                             newEntity = new Portal(e.x, e.y, e.width, message.body.color);
 
                                             if (newEntity.color == "red") {
@@ -71,19 +77,27 @@ class Server {
                                                 }
                                                 global.bluePortal = newEntity;
                                             }
-                                            //remove wall from under it
-                                            let index = global.entities.indexOf(e);
-                                            global.entities.splice(index, 1);
 
-
-                                            Server.prototype.sendRemoveByID(connections, e.id)
-
-                                            return false;
+                                            if (global.bluePortal && global.redPortal) {
+                                                let br = global.bluePortal.portalRect;
+                                                let wall1 = engine.place_meeting(br.x, br.y, br.width, br.height, Wall);
+                                                if (wall1) {
+                                                    let index = global.entities.indexOf(wall1);
+                                                    global.entities.splice(index, 1);
+                                                    Server.prototype.sendRemoveByID(connections, wall1.id)
+                                                }
+                                                let rr = global.redPortal.portalRect;
+                                                let wall2 = engine.place_meeting(rr.x, rr.y, rr.width, rr.height, Wall);
+                                                if (wall2) {
+                                                    let index = global.entities.indexOf(wall2);
+                                                    global.entities.splice(index, 1);
+                                                    Server.prototype.sendRemoveByID(connections, wall2.id)
+                                                }
+                                            }
                                         }
                                     }
                                 })
                                 break;
-
                             default:
                                 break;
                         }
@@ -92,18 +106,38 @@ class Server {
                             global.entities.push(newEntity);
                             Server.prototype.sendCreate(connections, newEntity);
                         }
-
-
+                        break;
+                    case 'clearportals':
+                        if (global.bluePortal) {
+                            let index = global.entities.indexOf(global.bluePortal);
+                            global.entities.splice(index, 1);
+                            Server.prototype.sendRemoveByID(connections, global.bluePortal.id)
+                            let newWall = new Wall(global.bluePortal.x, global.bluePortal.y, global.gridSize);
+                            global.entities.push(newWall);
+                            Server.prototype.sendCreate(connections, newWall);
+                        }
+                        if (global.redPortal) {
+                            let index = global.entities.indexOf(global.redPortal);
+                            global.entities.splice(index, 1);
+                            Server.prototype.sendRemoveByID(connections, global.redPortal.id)
+                            let newWall = new Wall(global.redPortal.x, global.redPortal.y, global.gridSize);
+                            global.entities.push(newWall);
+                            Server.prototype.sendCreate(connections, newWall);
+                        }
+                        global.redPortal = null;
+                        global.bluePortal = null;
+                        break;
                     default:
                         break;
                 }
 
             });
-            //csak egyszer csatlakozaskor kuldi
+            //send the map data once 
             global.entities.forEach(entity => {
                 Server.prototype.sendCreate([connection], entity);
             })
 
+            //we always send the changes
             const timer = setInterval(() => {
                 try {
                     global.entities.filter(e => (e instanceof Ball)).forEach(entity => {
@@ -114,7 +148,6 @@ class Server {
                     let index = connections.indexOf(connection);
                     if (index > -1)
                         connections.splice(index, 1);
-
                 }
             }, 30);
 
@@ -127,12 +160,12 @@ Server.prototype.sendRemoveByID = function (conns, id) {
     conns.forEach(conn => {
         conn.send(JSON.stringify({ command: "remove", id: id }));
     })
-}
+};
+
 Server.prototype.sendCreate = function (conns, entity) {
     conns.forEach(conn => {
         conn.send(JSON.stringify({ command: "create", type: entity.constructor.name, body: { id: entity.id, x: entity.x, y: entity.y, color: entity.color, width: entity.width, r: entity.r } }));
     })
-}
-
+};
 
 module.exports = Server;

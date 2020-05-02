@@ -45,6 +45,10 @@ class Ball extends engine.Entity {
         ctx.stroke();
     }
 
+    getCenter() {
+        return { x: this.x, y: this.y };
+    }
+
 
     getLeft() {
         return this.x - this.r;
