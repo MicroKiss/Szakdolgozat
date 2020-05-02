@@ -3,6 +3,6 @@ export default {
     PhysicsPrecision: 1000,
     entities: [],
     gridSize: 64,
-    ballRadius: 5,
+    ballRadius: 10,
 
 };
