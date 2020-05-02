@@ -22,7 +22,7 @@ document.write(Modif);
   * server vegezze a fizikai szimulaciot
   * ket szemely eggyszerre jatszhasson
 
-![Cat](https://d17fnq9dkz9hgj.cloudfront.net/uploads/2018/03/Scottish-Fold_01.jpg)
+![runs](./itruns.png)
 
 ## Az eredeti temabejelento
   Szakdolgozatom témája egy a Portal című játékhoz hasonló 2 dimenziós többszemélyes játék megvalósítása asztali vagy webes
@@ -42,3 +42,5 @@ socketek segítségével. Többszemélyesség a játékban oly módon fog megnyi
 - labda négyzet alakú fallal való ütközése
 - labda téglalap alakú fallal való ütközése
 - labda lekerekített téglalap alakú fallal való ütközése
+- 2 falra helyezhető portál
+- websocket alapú többszeméyles mód
