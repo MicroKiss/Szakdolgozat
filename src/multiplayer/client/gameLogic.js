@@ -22,11 +22,6 @@ canvas.height = innerHeight;
 
 document.oncontextmenu = (e) => { e.preventDefault(); };
 
-window.onresize = function (event) {
-    canvas.width = innerWidth;
-    canvas.height = innerHeight;
-
-};
 
 
 var mouseX = 0;
@@ -35,7 +30,9 @@ document.onmousemove = (e) => {
 
     var rect = canvas.getBoundingClientRect();
     mouseX = e.clientX - rect.left;
+    mouseX /= innerWidth / 1920;
     mouseY = e.clientY - rect.top;
+    mouseY /= innerHeight / 1080;
 
 }
 document.onmousedown = function (e) {

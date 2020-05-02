@@ -214,7 +214,7 @@ engine.handleCollision = function (first, second) {
 engine.ballBallCollision = function (ball, target) {
     if (ball === target)
         return;
-    let Distance = Math.hypot(ball.x - target.x, ball.y - target.y);
+    let Distance = Math.hypot(ball.x - target.x, ball.y - target.y) | 1;
 
     //Static collision
     let Overlap = 0.5 * (Distance - ball.r - target.r);
@@ -300,7 +300,7 @@ engine.squareBallOverlap = function (square, ball) {
     if (ball.x > right)
         return { overlap: (square.getWidth() / 2 + ball.r) + (middle.x - ball.x), where: "right" };
 
-    return 1;
+    return { overlap: 1, where: "above" };
 }
 
 
