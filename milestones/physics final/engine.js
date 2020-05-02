@@ -1,10 +1,10 @@
 
 import Vector from "./Vector2D.js";
-
+import global from "./globals.js"
 var engine = {
     lastTick: performance.now(),
     deltaTime: NaN,
-    PhysicsPrecision: 0.001, // 1/this is the number of physics simulations /secs
+    PhysicsPrecision: 1 / global.PhysicsPrecision, // 1/this is the number of physics simulations /secs
     gravity: 0.8 * 1000,//cus our screen is biiig
     friction: 0.9,//0.9
     index: NaN,
@@ -303,7 +303,7 @@ engine.squareBallOverlap = function (square, ball) {
     if (ball.x > right)
         return { overlap: (square.getWidth() / 2 + ball.r) + (middle.x - ball.x), where: "right" };
 
-    return 0;
+    return { overlap: 1, where: "above" };
 }
 
 
@@ -455,6 +455,7 @@ engine.roundRectBallCollision = function (rect, ball) {
 engine.simulatePhysics = function (entities) {
     let now = performance.now();
     engine.deltaTime = (now - engine.lastTick) / 1000;
+    global.deltaTime = (now - engine.lastTick) / 1000;
     engine.lastTick = now;
 
     // this way there is always a given number of phisycs updates in a second
@@ -510,7 +511,9 @@ engine.Entity = class Entity {
         this.shape = shape;
     }
     getDir() {
-        let vdist = Math.sqrt(this.vx ** 2 + this.vy ** 2);
+        let vdist = Math.hypot(this.vx, this.vy);
+        if (this.vx == this.vy && this.vx == 0)
+            return { x: 0, y: 1 };
         return { x: this.vx / vdist, y: this.vy / vdist }
     }
 
@@ -518,9 +521,6 @@ engine.Entity = class Entity {
     }
 
     physicsUpdate() {
-    }
-
-    draw() {
     }
 
     getLeft() {

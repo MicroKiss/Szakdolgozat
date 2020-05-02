@@ -303,7 +303,7 @@ engine.squareBallOverlap = function (square, ball) {
     if (ball.x > right)
         return { overlap: (square.getWidth() / 2 + ball.r) + (middle.x - ball.x), where: "right" };
 
-    return 0;
+    return { overlap: 1, where: "above" };
 }
 
 
@@ -511,7 +511,9 @@ engine.Entity = class Entity {
         this.shape = shape;
     }
     getDir() {
-        let vdist = Math.sqrt(this.vx ** 2 + this.vy ** 2);
+        let vdist = Math.hypot(this.vx, this.vy);
+        if (this.vx == this.vy && this.vx == 0)
+            return { x: 0, y: 1 };
         return { x: this.vx / vdist, y: this.vy / vdist }
     }
 

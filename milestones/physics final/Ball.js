@@ -7,11 +7,10 @@ export default class Ball extends engine.Entity {
         super(x, y, 2 * r, 2 * r, engine.shapes.CIRCLE);
         this.r = r;
         this.mass = ((this.r / 5) ** 2) * Math.PI;
-        console.log(this.mass);
 
         this.vx = vx | 0;
         this.vy = vy | 0;
-        this.color = "#" + ((1 << 24) * Math.random() | 0).toString(16);
+        this.color = "red";//"#" + ((1 << 24) * Math.random() | 0).toString(16);
     }
 
 
