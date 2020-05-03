@@ -496,6 +496,10 @@ engine.place_meeting = function (x, y, w, h, obj) {
     return friend;
 };
 
+engine.point_meeting = function (x, y, obj) {
+    return engine.place_meeting(x, y, 1, 1, obj);
+}
+
 engine.nearest = function (x, y, obj) {
     let closest = null;
     let distance = Infinity;

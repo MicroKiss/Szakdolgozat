@@ -6,10 +6,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Szakdolgozat</title>
     <link rel="shortcut icon" href="./favicon.ico" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 </head>
 
-<body style="margin: 1;">
-    <canvas id="canvas" width="800" height="600"></canvas>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-8">
+                <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+                    <input class=" mr-sm-2" type="text" id="inputDestination" placeholder="localhost:666">
+                    <button class="btn btn-success" id="btnConnect" type="connect">Connect</button>
+                </nav>
+            </div>
+            <div class="col-sm-2"></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-8">
+                <canvas id="canvas"></canvas>
+
+            </div>
+            <div class="col-sm-2"></div>
+
+        </div>
+    </div>
+
 </body>
 
 <script src="main.js" type="module"></script>

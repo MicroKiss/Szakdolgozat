@@ -12,15 +12,14 @@ class Ball extends engine.Entity {
 
         this.vx = vx | 0;
         this.vy = vy | 0;
-        this.color = "red";//"#" + ((1 << 24) * Math.random() | 0).toString(16);
     }
 
 
     physicsUpdate(deltaTime) {
-        let gravityForce = /*this.mass **/ engine.gravity * deltaTime;
+        let gravityForce = engine.gravity * deltaTime;
 
         this.ax = -this.vx * engine.friction;
-        this.ay = -this.vy * engine.friction;
+        this.ay = -this.vy * engine.friction * 0.5;
         this.vx += this.ax * deltaTime;
         this.vy += this.ay * deltaTime + gravityForce;
         this.x += this.vx * deltaTime;

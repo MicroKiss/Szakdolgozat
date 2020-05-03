@@ -43,4 +43,6 @@ socketek segítségével. Többszemélyesség a játékban oly módon fog megnyi
 - labda téglalap alakú fallal való ütközése
 - labda lekerekített téglalap alakú fallal való ütközése
 - 2 falra helyezhető portál
+- Portalok úgy viselkednek mint az eredeti játékban
 - websocket alapú többszeméyles mód
+- csatlakozás szerverre

@@ -12,13 +12,13 @@ const Server = require('./server.js');
 
 var Map = new mapLoader();
 
-var server = new Server('192.168.0.106', '80');
+var server = new Server('localhost', '666');
 
 function main() {
     engine.simulatePhysics(global.entities);
 }
 function run() {
-    setInterval(main, 30);
+    setInterval(main, 10);
 };
 
 run();

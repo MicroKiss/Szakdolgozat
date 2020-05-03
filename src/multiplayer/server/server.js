@@ -37,7 +37,8 @@ class Server {
                         let newEntity;
                         switch (message.type) {
                             case "Ball":
-                                newEntity = new Ball(message.body.x, message.body.y, global.ballRadius)
+                                if (!engine.point_meeting(message.body.x, message.body.y, Wall))
+                                    newEntity = new Ball(message.body.x, message.body.y, global.ballRadius, 0, 0)
                                 break;
                             case "Portal":
                                 global.entities.forEach(e => {
@@ -149,7 +150,7 @@ class Server {
                     if (index > -1)
                         connections.splice(index, 1);
                 }
-            }, 30);
+            }, 10);
 
         });
     }

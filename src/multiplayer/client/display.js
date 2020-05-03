@@ -1,24 +1,27 @@
 
 import global from "./globals.js"
-
-
-
-const canvas = document.getElementById('canvas');
-window.onresize = function (event) {
-    canvas.width = innerWidth;
-    canvas.height = innerHeight;
-
-};
-
 var display = {
     backgroundColor: "white",
     ctx: document.getElementById('canvas').getContext('2d'),
     canvas: document.getElementById('canvas'),
 };
 
+display.canvas.width = innerWidth * 0.65;
+display.canvas.height = innerHeight * 0.8;
+window.onresize = function (event) {
+    display.canvas.width = innerWidth * 0.65;
+    display.canvas.height = innerHeight * 0.8;
+
+};
+
+
+
 display.drawBackground = function () {
+
+
     display.ctx.fillStyle = display.backgroundColor;
-    display.ctx.fillRect(0, 0, display.canvas.width, display.canvas.height);
+    display.ctx.fillRect(0, 0, 1920, 1080);
+
 }
 
 display.drawGUI = function () {
