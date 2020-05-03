@@ -1,13 +1,12 @@
 import global from "./globals.js";
 import Ball from "./Ball.js";
 import Wall from "./Wall.js";
-import RoundedWall from "./Wall2.js"
+import RoundWall from "./RoundWall.js"
 
 
 const W = Wall;
 const _ = null;
 const B = Ball;
-const R = RoundedWall;
 
 export default class mapLoader {
 
@@ -42,6 +41,7 @@ export default class mapLoader {
             [W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W],
             [W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W],
         ];
+        global.entities.push(new RoundWall(5 * global.gridSize, 5 * global.gridSize, 10 * global.gridSize, 10 * global.gridSize, global.ballRadius));
 
         for (let i = 0; i < palya.length; i++) {
             const row = palya[i];

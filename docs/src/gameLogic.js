@@ -3,7 +3,6 @@ import Ball from "./Ball.js";
 import Wall from "./Wall.js";
 import Portal from "./Portal.js";
 import engine from "./engine.js";
-import RoundedWall from "./Wall2.js"
 
 
 
@@ -144,7 +143,11 @@ document.onkeydown = function (e) {
             global.redPortal = null;
             global.bluePortal = null;
             break;
-
+        case 'L'.charCodeAt(0):
+            global.PhysicsPrecision += 100;
+            global.PhysicsPrecision = 100 + (global.PhysicsPrecision - 100) % 1100;
+            engine.PhysicsPrecision = 1 / global.PhysicsPrecision;
+            break;
         default:
             break;
     }

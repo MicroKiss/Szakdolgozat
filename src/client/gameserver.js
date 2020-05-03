@@ -3,6 +3,7 @@
 import global from "./globals.js";
 import Ball from "./Ball.js";
 import Wall from "./Wall.js";
+import RoundWall from "./RoundWall.js";
 import Portal from "./Portal.js";
 import display from "./display.js";
 import gameLogic from "./gameLogic.js";
@@ -27,6 +28,11 @@ class gameServer {
                     switch (message.type) {
                         case "Wall":
                             obj = new Wall(message.body.x, message.body.y, message.body.width);
+                            obj.id = message.body.id;
+                            global.entities.push(obj)
+                            break;
+                        case "RoundWall":
+                            obj = new RoundWall(message.body.sx, message.body.sy, message.body.ex, message.body.ey, message.body.r);
                             obj.id = message.body.id;
                             global.entities.push(obj)
                             break;

@@ -1,19 +1,18 @@
 
-const engine = require('./engine.js');
-
-
-class RoundedWall extends engine.Entity {
+export default class RoundWall {
 
     constructor(sx, sy, ex, ey, r) {
-        super(Math.min(sx, ex) - r, Math.min(sy, ey) - r, Math.abs(ex - sx) + r, Math.abs(ey - sy) + r, engine.shapes.ROUNDRECTANGLE)
+        this.x = Math.min(sx, ex) - r;
+        this.y = Math.min(sy, ey) - r;
+        this.width = Math.abs(ex - sx) + r;
+        this.height = Math.abs(ey - sy) + r;
         this.sx = sx;
         this.sy = sy;
         this.ex = ex;
         this.ey = ey;
         this.r = r;
-        this.mass = Infinity;
 
-        this.color = "#" + ((1 << 24) * Math.random() | 0).toString(16);
+        this.color = "black";
     }
 
 
@@ -42,4 +41,3 @@ class RoundedWall extends engine.Entity {
 
 
 }
-exports.RoundedWall = RoundedWall;

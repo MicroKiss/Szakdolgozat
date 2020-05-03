@@ -10,8 +10,13 @@ var display = {
 
 const canvas = document.getElementById('canvas');
 
-canvas.width = innerWidth - 10;
-canvas.height = innerHeight - 20;
+canvas.width = innerWidth * 0.65;
+canvas.height = innerHeight * 0.8;
+window.onresize = function (event) {
+    display.canvas.width = innerWidth * 0.65;
+    display.canvas.height = innerHeight * 0.8;
+
+};
 
 display.drawBackground = function () {
     display.ctx.fillStyle = display.backgroundColor;

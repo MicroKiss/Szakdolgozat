@@ -28,7 +28,6 @@ class Server {
             connection.on('message', function (message) {
                 message = JSON.parse(message);
 
-
                 switch (message.command) {
                     case "create":
                         let newEntity;
@@ -168,7 +167,7 @@ Server.prototype.sendCreate = function (conns, entity) {
     conns.forEach(conn => {
         conn.send(JSON.stringify({
             command: "create", type: entity.constructor.name, body:
-                { id: entity.id, x: entity.x, y: entity.y, color: entity.color, width: entity.width, r: entity.r }
+                { id: entity.id, sx: entity.sx, sy: entity.sy, ex: entity.ex, ey: entity.ey, x: entity.x, y: entity.y, color: entity.color, width: entity.width, r: entity.r }
         }));
     })
 };

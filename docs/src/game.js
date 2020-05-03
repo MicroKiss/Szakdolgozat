@@ -1,10 +1,7 @@
 
 import global from "./globals.js";
 import engine from "./engine.js";
-import Ball from "./Ball.js";
-import Wall from "./Wall.js";
 import display from "./display.js";
-import RoundedWall from "./Wall2.js"
 import gameLogic from "./gameLogic.js"
 import mapLoader from "./mapLoader.js"
 //npx http-server -c-1
@@ -15,6 +12,8 @@ import mapLoader from "./mapLoader.js"
 
 Map = new mapLoader();
 
+
+alert("you can change the physics precision by pressing 'L'")
 
 function main() {
 

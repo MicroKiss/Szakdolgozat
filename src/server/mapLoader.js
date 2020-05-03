@@ -1,13 +1,12 @@
 const global = require('./globals.js');
 const Ball = require('./Ball.js');
 const Wall = require('./Wall.js');
-const RoundedWall = require('./Wall2.js');
+const RoundWall = require('./RoundWall.js');
 
 
 const W = Wall;
 const _ = null;
 const B = Ball;
-const R = RoundedWall;
 
 class mapLoader {
 
@@ -42,6 +41,8 @@ class mapLoader {
             [W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W],
             [W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W],
         ];
+
+        global.entities.push(new RoundWall(5 * global.gridSize, 5 * global.gridSize, 10 * global.gridSize, 10 * global.gridSize, global.ballRadius));
 
         for (let i = 0; i < palya.length; i++) {
             const row = palya[i];
