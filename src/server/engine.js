@@ -452,11 +452,11 @@ engine.roundRectBallCollision = function (rect, ball) {
 engine.simulatePhysics = function (entities) {
     let now = performanceNow();
     engine.deltaTime = (now - engine.lastTick) / 1000;
-    global.deltaTime = (now - engine.lastTick) / 1000;
+    global.deltaTime = engine.deltaTime;
     engine.lastTick = now;
 
     // this way there is always a given number of phisycs updates in a second
-    let loopindex = engine.deltaTime / engine.PhysicsPrecision;
+    let loopindex = Math.ceil(engine.deltaTime / engine.PhysicsPrecision);
 
     for (let i = 0; i < loopindex; i++) {
         let deltatime = engine.deltaTime / loopindex;
