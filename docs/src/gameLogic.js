@@ -1,82 +1,147 @@
 import global from "./globals.js";
 import Ball from "./Ball.js";
 import Wall from "./Wall.js";
+import Portal from "./Portal.js";
+import engine from "./engine.js";
 import RoundedWall from "./Wall2.js"
 
 
 
 var gameLogic = {};
 
-var selectedball = NaN;
-var mouseX;
-var mouseY;
-var mouseBtn;
+var canvasObj = document.querySelector("canvas");
 
+
+
+const canvas = document.getElementById('canvas');
+
+
+//npx http-server -c-1
 
 document.oncontextmenu = (e) => { e.preventDefault(); };
 
 
-document.onmousemove = (e) => {
+
+var mouseX = 0;
+var mouseY = 0;
+canvasObj.onmousemove = (e) => {
 
     var rect = canvas.getBoundingClientRect();
     mouseX = e.clientX - rect.left;
+    mouseX /= innerWidth / 1920;
     mouseY = e.clientY - rect.top;
+    mouseY /= innerHeight / 1080;
 
 }
-
-document.onmousedown = function (e) {
+canvasObj.onmousedown = function (e) {
     e.preventDefault();
-    mouseBtn = e.button;
+    let message = {};
+    if (e.button === 0 /* LMB*/) {
+        message = ({ command: 'create', type: Portal.name, body: { x: mouseX, y: mouseY, color: "red" } });
+    }
+    else if (e.button === 1 /* MMB*/) {
+        message = ({ command: 'create', type: Ball.name, body: { x: mouseX, y: mouseY } });
+    }
+    else if (e.button === 2 /*RMB*/) {
+        message = ({ command: 'create', type: Portal.name, body: { x: mouseX, y: mouseY, color: "blue" } });
+    }
 
 
-    if (e.button === 2 || e.button === 0) {
-
-        for (const ball of global.entities) {
-            if (ball instanceof Ball) {
-                let Distance = Math.sqrt(
-                    Math.pow(ball.x - mouseX, 2) + Math.pow(ball.y - mouseY, 2));
-
-                if (Distance < ball.r) {
-                    selectedball = ball;
+    switch (message.command) {
+        case "create":
+            let newEntity;
+            switch (message.type) {
+                case "Ball":
+                    if (!engine.point_meeting(message.body.x, message.body.y, Wall))
+                        newEntity = new Ball(message.body.x, message.body.y, global.ballRadius, 0, 0)
                     break;
-                }
+                case "Portal":
+                    global.entities.forEach(e => {
+                        if (e instanceof Wall) {
+                            let center = e.getCenter();
+                            let Distance = Math.sqrt(
+                                Math.pow(center.x - message.body.x, 2) + Math.pow(center.y - message.body.y, 2));
+
+                            if (Distance < global.gridSize / 2) {
+                                //create new portal
+
+                                //you can't stack portals
+                                if (engine.place_meeting(e.x - 10, e.y - 10, e.getWidth() + 20, e.getHeight() + 20, Portal))
+                                    return;
+
+                                newEntity = new Portal(e.x, e.y, e.width, message.body.color);
+
+                                if (newEntity.color == "red") {
+                                    if (global.redPortal) {
+                                        let index = global.entities.indexOf(global.redPortal);
+                                        global.entities.splice(index, 1);
+                                        let newWall = new Wall(global.redPortal.x, global.redPortal.y, global.gridSize);
+                                        global.entities.push(newWall);
+                                    }
+                                    global.redPortal = newEntity;
+                                }
+                                else if (newEntity.color == "blue") {
+                                    if (global.bluePortal) {
+                                        let index = global.entities.indexOf(global.bluePortal);
+                                        global.entities.splice(index, 1);
+                                        let newWall = new Wall(global.bluePortal.x, global.bluePortal.y, global.gridSize);
+                                        global.entities.push(newWall);
+                                    }
+                                    global.bluePortal = newEntity;
+                                }
+
+                                if (global.bluePortal && global.redPortal) {
+                                    let br = global.bluePortal.portalRect;
+                                    let wall1 = engine.place_meeting(br.x, br.y, br.width, br.height, Wall);
+                                    if (wall1) {
+                                        let index = global.entities.indexOf(wall1);
+                                        global.entities.splice(index, 1);
+                                    }
+                                    let rr = global.redPortal.portalRect;
+                                    let wall2 = engine.place_meeting(rr.x, rr.y, rr.width, rr.height, Wall);
+                                    if (wall2) {
+                                        let index = global.entities.indexOf(wall2);
+                                        global.entities.splice(index, 1);
+                                    }
+                                }
+                            }
+                        }
+                    })
+                    break;
+                default:
+                    break;
             }
 
-        }
-    }
-    else if (e.button === 1) {
-        global.entities.push(new Ball(mouseX, mouseY, global.ballRadius))
+            if (newEntity) {
+                global.entities.push(newEntity);
+            }
+            break;
+        default:
+            break;
     }
 }
+document.onkeydown = function (e) {
+    switch (e.keyCode) {
+        case ' '.charCodeAt(0):
+            if (global.bluePortal) {
+                let index = global.entities.indexOf(global.bluePortal);
+                global.entities.splice(index, 1);
+                let newWall = new Wall(global.bluePortal.x, global.bluePortal.y, global.gridSize);
+                global.entities.push(newWall);
+            }
+            if (global.redPortal) {
+                let index = global.entities.indexOf(global.redPortal);
+                global.entities.splice(index, 1);
+                let newWall = new Wall(global.redPortal.x, global.redPortal.y, global.gridSize);
+                global.entities.push(newWall);
+            }
+            global.redPortal = null;
+            global.bluePortal = null;
+            break;
 
-document.onmouseup = function (e) {
-    e.preventDefault();
-    if (e.button === 2) {
-
-        if (selectedball) {
-            let vectorx = selectedball.x - mouseX;
-            let vectory = selectedball.y - mouseY;
-
-            selectedball.vx = 5 * vectorx;
-            selectedball.vy = 5 * vectory;
-        }
+        default:
+            break;
     }
-    selectedball = NaN;
 }
-
-
-
-gameLogic.update = function () {
-    if (selectedball && mouseBtn == 0) {
-        let vectorx = mouseX - selectedball.x;
-        let vectory = mouseY - selectedball.y;
-        let epsilon = Math.PI * 5;
-        selectedball.vx += vectorx * epsilon;
-        selectedball.vy += vectory * epsilon;
-        selectedball.vx *= 0.6;
-        selectedball.vy *= 0.6;
-    }
-
-};
 
 export default gameLogic;

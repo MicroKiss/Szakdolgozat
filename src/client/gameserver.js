@@ -10,6 +10,12 @@ import gameLogic from "./gameLogic.js";
 class gameServer {
     constructor(destination) {
         this.ws = new WebSocket(`ws://${destination}`);
+        this.ws.onclose = function (event) {
+            console.log("server connection lost ");
+
+            document.querySelector("#btnConnect").disabled = false;
+            global.gameIsInActive = true;
+        }
         global.ws = this.ws;
         this.ws.onmessage = function (event) {
 

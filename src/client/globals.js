@@ -5,4 +5,5 @@ export default {
     gridSize: 64,
     ballRadius: 20,
     ws: null,
-};
+    gameIsInActive: true,
+}

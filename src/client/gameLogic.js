@@ -43,9 +43,12 @@ canvasObj.onmousedown = function (e) {
         global.ws.send(JSON.stringify({ command: 'create', type: Portal.name, body: { x: mouseX, y: mouseY, color: "blue" } }));
     }
 }
-canvasObj.onkeydown = function (e) {
+document.onkeydown = function (e) {
+    if (global.gameIsInActive)
+        return;
     switch (e.keyCode) {
         case ' '.charCodeAt(0):
+
             global.ws.send(JSON.stringify({ command: 'clearportals' }));
             break;
 

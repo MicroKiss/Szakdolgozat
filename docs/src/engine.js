@@ -1,36 +1,25 @@
 
 import Vector from "./Vector2D.js";
 import global from "./globals.js"
+
 var engine = {
     lastTick: performance.now(),
-    deltaTime: NaN,
+    deltaTime: 0.1,
     PhysicsPrecision: 1 / global.PhysicsPrecision, // 1/this is the number of physics simulations /secs
     gravity: 0.8 * 1000,//cus our screen is biiig
     friction: 0.9,//0.9
-    index: NaN,
+    index: {},
     indexSize: 256,
     shapes: {
         CIRCLE: "circle",
         RECTANGLE: "rectangle",
         ROUNDRECTANGLE: "roundrectangle",
         SQUARE: "square",
+        PORTAL: "portal",
     },
 
 };
 
-engine._pressedKeys = {}; //asszociatív tömbben tároljuk, hogy egy gomb le van-e nyomva
-
-document.onkeydown = function (e) {
-    engine._pressedKeys[e.which] = true;
-};
-
-document.onkeyup = function (e) {
-    engine._pressedKeys[e.which] = false;
-};
-
-engine.isDown = function (key) {
-    return engine._pressedKeys[key] === true;
-};
 
 
 
@@ -103,26 +92,32 @@ engine.doEntitiesIntersect = function (first, second) {
 
 
     if (first.shape == second.shape) {
-        if (first.shape == engine.shapes.RECTANGLE || first.shape == engine.shapes.SQUARE)
+        if (first.shape == engine.shapes.RECTANGLE || first.shape == engine.shapes.SQUARE || first.shape == engine.shapes.PORTAL)
             return engine.rectangleIntersect(first.x, first.y, first.width, first.height, second.x, second.y, second.width, second.height);
         if (first.shape == engine.shapes.CIRCLE)
             return engine.circleIntersect(first.x, first.y, first.r, second.x, second.y, second.r);
     }
 
-    if ((first.shape == engine.shapes.SQUARE || first.shape == engine.shapes.RECTANGLE) && second.shape == engine.shapes.CIRCLE)
+
+    if ((first.shape == engine.shapes.RECTANGLE || first.shape == engine.shapes.SQUARE || first.shape == engine.shapes.PORTAL) && (second.shape == engine.shapes.RECTANGLE || second.shape == engine.shapes.SQUARE || second.shape == engine.shapes.PORTAL))
+        return engine.rectangleIntersect(first.x, first.y, first.width, first.height, second.x, second.y, second.width, second.height);
+
+
+
+    if ((first.shape == engine.shapes.SQUARE || first.shape == engine.shapes.RECTANGLE || first.shape == engine.shapes.PORTAL) && second.shape == engine.shapes.CIRCLE)
         return engine.rectCircleColliding(first, second);
-    if ((second.shape == engine.shapes.SQUARE || second.shape == engine.shapes.RECTANGLE) && first.shape == engine.shapes.CIRCLE)
-        return engine.rectCircleColliding(second, first);
+    // if ((second.shape == engine.shapes.SQUARE || second.shape == engine.shapes.RECTANGLE) && first.shape == engine.shapes.CIRCLE)
+    //     return engine.rectCircleColliding(second, first);
 
     if (first.shape == engine.shapes.ROUNDRECTANGLE && second.shape == engine.shapes.CIRCLE)
         return engine.roundRectCircleIntersect(first, second);
-    if (second.shape == engine.shapes.ROUNDRECTANGLE && first.shape == engine.shapes.CIRCLE)
-        return engine.roundRectCircleIntersect(second, first);
+    // if (second.shape == engine.shapes.ROUNDRECTANGLE && first.shape == engine.shapes.CIRCLE)
+    //     return engine.roundRectCircleIntersect(second, first);
 
     return false;
 }
 
-//terbeli indexeles
+//térbeli indexeles
 engine.createIndex = function (entities, size) { //bin index készítés
     if (!size) {
         size = engine.indexSize;
@@ -198,16 +193,17 @@ engine.createIndex = function (entities, size) { //bin index készítés
 
 engine.handleCollision = function (first, second) {
 
+
     if (first.shape == engine.shapes.CIRCLE && second.shape == first.shape) {
         engine.ballBallCollision(first, second);
     }
-    if (first.shape == engine.shapes.RECTANGLE && second.shape == engine.shapes.CIRCLE) {
+    else if (first.shape == engine.shapes.RECTANGLE && second.shape == engine.shapes.CIRCLE) {
         engine.rectBallCollision(first, second)
     }
-    if (first.shape == engine.shapes.SQUARE && second.shape == engine.shapes.CIRCLE) {
+    else if (first.shape == engine.shapes.SQUARE && second.shape == engine.shapes.CIRCLE) {
         engine.squareBallCollision(first, second)
     }
-    if (first.shape == engine.shapes.ROUNDRECTANGLE && second.shape == engine.shapes.CIRCLE) {
+    else if (first.shape == engine.shapes.ROUNDRECTANGLE && second.shape == engine.shapes.CIRCLE) {
         engine.roundRectBallCollision(first, second)
     }
 
@@ -216,8 +212,7 @@ engine.handleCollision = function (first, second) {
 engine.ballBallCollision = function (ball, target) {
     if (ball === target)
         return;
-    let Distance = Math.sqrt(
-        Math.pow(ball.x - target.x, 2) + Math.pow(ball.y - target.y, 2));
+    let Distance = Math.hypot(ball.x - target.x, ball.y - target.y) | 1;
 
     //Static collision
     let Overlap = 0.5 * (Distance - ball.r - target.r);
@@ -463,13 +458,13 @@ engine.simulatePhysics = function (entities) {
 
     for (let i = 0; i < loopindex; i++) {
         let deltatime = engine.deltaTime / loopindex;
-        let index = engine.createIndex(entities);
+        engine.index = engine.createIndex(entities);
 
         for (let entity of entities) {
             //csak a ra vonatkozo dolgok
             entity.physicsUpdate(deltatime);
             //utkozesek
-            const others = index.query(entity);
+            const others = engine.index.query(entity);
             others.forEach(other => {
                 engine.handleCollision(entity, other);
             });
@@ -480,24 +475,50 @@ engine.simulatePhysics = function (entities) {
 
 engine.place_meeting = function (x, y, w, h, obj) {
 
-    const entities = gameContext.index.query(new engine.Entity(
+    let friend = false;
+    const entities = engine.index.query(new engine.Entity(
         x,
         y,
         w,
         h)
     );
 
-    for (let entity of entities)
-        if (entity instanceof obj && entity != this)
-            return true;
-    return false;
+    for (let entity of entities) {
+
+        if (entity.constructor.name == obj.name) {
+            friend = entity;
+            break;
+        }
+    }
+
+    return friend;
 };
 
-engine.Entity = class Entity {
-    constructor(x, y, w, h, shape) {
-        if (!shape) {
-            shape = engine.shapes.SQUARE;
+engine.point_meeting = function (x, y, obj) {
+    return engine.place_meeting(x, y, 1, 1, obj);
+}
+
+engine.nearest = function (x, y, obj) {
+    let closest = null;
+    let distance = Infinity;
+    for (let i = 0; i < global.entities.length; i++) {
+        const element = global.entities[i];
+        if (typeof (element) == obj) {
+            let currDistance = Math.hypot(element.getCenter().x - x, element.getCenter().y - y);
+            if (currDistance < distance) {
+                closest = element;
+                distance = currDistance;
+            }
         }
+    }
+    return closest;
+}
+
+engine.Entity = class Entity {
+    constructor(x, y, w, h, shape = engine.shapes.SQUARE) {
+        this.id = global.objID;
+        global.objID++;
+
         this.x = x;
         this.y = y;
         this.mass = w * h;
@@ -515,6 +536,9 @@ engine.Entity = class Entity {
         if (this.vx == this.vy && this.vx == 0)
             return { x: 0, y: 1 };
         return { x: this.vx / vdist, y: this.vy / vdist }
+    }
+    getCenter() {
+        return { x: this.x + this.getWidth() / 2, y: this.y + this.getHeight() / 2 };
     }
 
     update() {
@@ -539,6 +563,7 @@ engine.Entity = class Entity {
         return this.height;
     }
 };
+
 
 export default engine;
 

@@ -19,7 +19,7 @@ export default class Ball extends engine.Entity {
 
 
         this.ax = -this.vx * engine.friction;
-        this.ay = -this.vy * engine.friction;
+        this.ay = -this.vy * engine.friction *.5;
         this.vx += this.ax * deltaTime;
         this.vy += this.ay * deltaTime + gravityForce;
         this.x += this.vx * deltaTime;

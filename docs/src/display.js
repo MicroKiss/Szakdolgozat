@@ -7,9 +7,15 @@ var display = {
     canvas: document.getElementById('canvas'),
 };
 
+
+const canvas = document.getElementById('canvas');
+
+canvas.width = innerWidth - 10;
+canvas.height = innerHeight - 20;
+
 display.drawBackground = function () {
     display.ctx.fillStyle = display.backgroundColor;
-    display.ctx.fillRect(0, 0, display.canvas.width, display.canvas.height);
+    display.ctx.fillRect(0, 0, 1920, 1080);
 }
 
 display.drawGUI = function () {
@@ -23,11 +29,13 @@ display.drawGUI = function () {
 }
 
 display.draw = function (entities) {
+    display.ctx.scale(innerWidth / 1920, innerHeight / 1080);
     display.drawBackground();
     entities.forEach(element => {
         element.draw(display.ctx)
     });
     display.drawGUI();
+    display.ctx.setTransform(1, 0, 0, 1, 0, 0);
 };
 
 

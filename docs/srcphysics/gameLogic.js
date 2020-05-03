@@ -44,6 +44,9 @@ document.onmousedown = function (e) {
 
         }
     }
+    else if (e.button === 1) {
+        global.entities.push(new Ball(mouseX, mouseY, global.ballRadius))
+    }
 }
 
 document.onmouseup = function (e) {

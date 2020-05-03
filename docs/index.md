@@ -1,8 +1,9 @@
 # Szakdolgozat: Portal 2D
 > hatarido : majus 15 (eddigre kell bekotve leadni)
 
-## jelenlegi demo:
-[Demo](src)
+## jelenlegi demok:
+[Portalok](src)
+[Fizika](srcphysics)
 
 <p>
 <small>

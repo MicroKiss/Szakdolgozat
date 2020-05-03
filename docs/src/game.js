@@ -1,4 +1,3 @@
-const canvas = document.getElementById('canvas');
 
 import global from "./globals.js";
 import engine from "./engine.js";
@@ -12,8 +11,6 @@ import mapLoader from "./mapLoader.js"
 
 
 
-canvas.width = innerWidth - 10;
-canvas.height = innerHeight - 20;
 
 
 Map = new mapLoader();
@@ -23,7 +20,6 @@ function main() {
 
     engine.simulatePhysics(global.entities);
     display.draw(global.entities);
-    gameLogic.update();
 
 
 
