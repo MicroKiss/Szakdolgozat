@@ -65,8 +65,14 @@ canvasObj.onmousedown = function (e) {
                             if (Distance < global.gridSize / 2) {
                                 //create new portal
 
-                                //you can't stack portals
-                                if (engine.place_meeting(e.x - 10, e.y - 10, e.getWidth() + 20, e.getHeight() + 20, Portal))
+                                //you can't place a portal next to another
+                                if (engine.point_meeting(e.x - e.width / 2, e.y + e.height / 2, Portal))
+                                    return;
+                                if (engine.point_meeting(e.x + 3 * e.width / 2, e.y + e.height / 2, Portal))
+                                    return;
+                                if (engine.point_meeting(e.x + e.width / 2, e.y - e.width / 2, Portal))
+                                    return;
+                                if (engine.point_meeting(e.x + e.width / 2, e.y + 3 * e.width / 2, Portal))
                                     return;
 
                                 newEntity = new Portal(e.x, e.y, e.width, message.body.color);

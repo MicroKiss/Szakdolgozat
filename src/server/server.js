@@ -3,11 +3,9 @@ var ws = require('ws');
 
 const global = require('./globals.js');
 const engine = require('./engine.js');
-
 const Ball = require('./Ball.js');
 const Portal = require('./Portal.js');
 const Wall = require('./Wall.js');
-
 
 var connections = [];
 class Server {
@@ -24,7 +22,6 @@ class Server {
                 let index = connections.indexOf(connection);
                 if (index > -1)
                     connections.splice(index, 1);
-
                 clearInterval(timer);
             });
 
@@ -47,68 +44,68 @@ class Server {
                                         let Distance = Math.sqrt(
                                             Math.pow(center.x - message.body.x, 2) + Math.pow(center.y - message.body.y, 2));
 
-                                        if (Distance < global.gridSize / 2) {
-                                            //create new portal
+                                        if (Distance > global.gridSize / 2)
+                                            return;
+                                        //create new portal
 
-                                            //you can't place a portal next to another
-                                            if (engine.point_meeting(e.x - e.width / 2, e.y + e.height / 2, Portal))
-                                                return;
-                                            if (engine.point_meeting(e.x + 3 * e.width / 2, e.y + e.height / 2, Portal))
-                                                return;
-                                            if (engine.point_meeting(e.x + e.width / 2, e.y - e.width / 2, Portal))
-                                                return;
-                                            if (engine.point_meeting(e.x + e.width / 2, e.y + 3 * e.width / 2, Portal))
-                                                return;
+                                        //you can't place a portal next to another
+                                        if (engine.point_meeting(e.x - e.width / 2, e.y + e.height / 2, Portal))
+                                            return;
+                                        if (engine.point_meeting(e.x + 3 * e.width / 2, e.y + e.height / 2, Portal))
+                                            return;
+                                        if (engine.point_meeting(e.x + e.width / 2, e.y - e.width / 2, Portal))
+                                            return;
+                                        if (engine.point_meeting(e.x + e.width / 2, e.y + 3 * e.width / 2, Portal))
+                                            return;
 
-                                            newEntity = new Portal(e.x, e.y, e.width, message.body.color);
+                                        newEntity = new Portal(e.x, e.y, e.width, message.body.color);
 
-                                            if (newEntity.color == "red") {
-                                                if (global.redPortal) {
-                                                    let index = global.entities.indexOf(global.redPortal);
-                                                    global.entities.splice(index, 1);
-                                                    Server.prototype.sendRemoveByID(connections, global.redPortal.id)
-                                                    let newWall = new Wall(global.redPortal.x, global.redPortal.y, global.gridSize);
-                                                    global.entities.push(newWall);
-                                                    Server.prototype.sendCreate(connections, newWall);
-                                                }
-                                                global.redPortal = newEntity;
+                                        if (newEntity.color == "red") {
+                                            if (global.redPortal) {
+                                                let index = global.entities.indexOf(global.redPortal);
+                                                global.entities.splice(index, 1);
+                                                Server.prototype.sendRemoveByID(connections, global.redPortal.id)
+                                                let newWall = new Wall(global.redPortal.x, global.redPortal.y, global.gridSize);
+                                                global.entities.push(newWall);
+                                                Server.prototype.sendCreate(connections, newWall);
                                             }
-                                            else if (newEntity.color == "blue") {
-                                                if (global.bluePortal) {
-                                                    let index = global.entities.indexOf(global.bluePortal);
-                                                    global.entities.splice(index, 1);
-                                                    Server.prototype.sendRemoveByID(connections, global.bluePortal.id)
-                                                    let newWall = new Wall(global.bluePortal.x, global.bluePortal.y, global.gridSize);
-                                                    global.entities.push(newWall);
-                                                    Server.prototype.sendCreate(connections, newWall);
-                                                }
-                                                global.bluePortal = newEntity;
+                                            global.redPortal = newEntity;
+                                        }
+                                        else if (newEntity.color == "blue") {
+                                            if (global.bluePortal) {
+                                                let index = global.entities.indexOf(global.bluePortal);
+                                                global.entities.splice(index, 1);
+                                                Server.prototype.sendRemoveByID(connections, global.bluePortal.id)
+                                                let newWall = new Wall(global.bluePortal.x, global.bluePortal.y, global.gridSize);
+                                                global.entities.push(newWall);
+                                                Server.prototype.sendCreate(connections, newWall);
                                             }
-
-                                            if (global.bluePortal && global.redPortal) {
-                                                let br = global.bluePortal.portalRect;
-                                                let wall1 = engine.place_meeting(br.x, br.y, br.width, br.height, Wall);
-                                                if (wall1) {
-                                                    let index = global.entities.indexOf(wall1);
-                                                    global.entities.splice(index, 1);
-                                                    Server.prototype.sendRemoveByID(connections, wall1.id)
-                                                }
-                                                let rr = global.redPortal.portalRect;
-                                                let wall2 = engine.place_meeting(rr.x, rr.y, rr.width, rr.height, Wall);
-                                                if (wall2) {
-                                                    let index = global.entities.indexOf(wall2);
-                                                    global.entities.splice(index, 1);
-                                                    Server.prototype.sendRemoveByID(connections, wall2.id)
-                                                }
+                                            global.bluePortal = newEntity;
+                                        }
+                                        if (global.bluePortal && global.redPortal) {
+                                            let br = global.bluePortal.getCenter();
+                                            let wall1 = engine.point_meeting(br.x, br.y, Wall)
+                                            if (wall1) {
+                                                let index = global.entities.indexOf(wall1);
+                                                global.entities.splice(index, 1);
+                                                Server.prototype.sendRemoveByID(connections, wall1.id)
+                                            }
+                                            let rr = global.redPortal.getCenter();
+                                            let wall2 = engine.point_meeting(rr.x, rr.y, Wall);
+                                            if (wall2) {
+                                                let index = global.entities.indexOf(wall2);
+                                                global.entities.splice(index, 1);
+                                                Server.prototype.sendRemoveByID(connections, wall2.id)
                                             }
                                         }
+
                                     }
                                 })
                                 break;
+
                             default:
                                 break;
                         }
-
                         if (newEntity) {
                             global.entities.push(newEntity);
                             Server.prototype.sendCreate(connections, newEntity);
@@ -137,7 +134,6 @@ class Server {
                     default:
                         break;
                 }
-
             });
             //send the map data once 
             global.entities.forEach(entity => {
@@ -168,10 +164,12 @@ Server.prototype.sendRemoveByID = function (conns, id) {
         conn.send(JSON.stringify({ command: "remove", id: id }));
     })
 };
-
 Server.prototype.sendCreate = function (conns, entity) {
     conns.forEach(conn => {
-        conn.send(JSON.stringify({ command: "create", type: entity.constructor.name, body: { id: entity.id, x: entity.x, y: entity.y, color: entity.color, width: entity.width, r: entity.r } }));
+        conn.send(JSON.stringify({
+            command: "create", type: entity.constructor.name, body:
+                { id: entity.id, x: entity.x, y: entity.y, color: entity.color, width: entity.width, r: entity.r }
+        }));
     })
 };
 
