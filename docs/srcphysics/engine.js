@@ -18,21 +18,6 @@ var engine = {
 
 };
 
-engine._pressedKeys = {}; //asszociatív tömbben tároljuk, hogy egy gomb le van-e nyomva
-
-document.onkeydown = function (e) {
-    engine._pressedKeys[e.which] = true;
-};
-
-document.onkeyup = function (e) {
-    engine._pressedKeys[e.which] = false;
-};
-
-engine.isDown = function (key) {
-    return engine._pressedKeys[key] === true;
-};
-
-
 
 //teglalapok metszese
 engine.rectangleIntersect = function (x1, y1, w1, h1, x2, y2, w2, h2) {

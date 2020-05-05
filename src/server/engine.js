@@ -70,8 +70,6 @@ engine.rectCircleColliding = function (rect, circle) {
     let distX = Math.abs(circle.x - rect.x - rect.width / 2);
     let distY = Math.abs(circle.y - rect.y - rect.height / 2);
 
-
-
     if (distX > (rect.width / 2 + circle.r)) {
         return false;
     }
