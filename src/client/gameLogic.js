@@ -16,9 +16,9 @@ canvasObj.onmousemove = (e) => {
 
     var rect = canvasObj.getBoundingClientRect();
     mouseX = e.clientX - rect.left;
-    mouseX /= innerWidth / 1920;
+    mouseX /= display.canvas.width / 1920;
     mouseY = e.clientY - rect.top;
-    mouseY /= innerHeight / 1080;
+    mouseY /= display.canvas.height / 1080;
 
 }
 canvasObj.onmousedown = function (e) {

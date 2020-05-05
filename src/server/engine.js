@@ -484,7 +484,6 @@ engine.place_meeting = function (x, y, w, h, obj) {
     );
 
     for (let entity of entities) {
-
         if (entity.constructor.name == obj.name) {
             friend = entity;
             break;

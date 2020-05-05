@@ -12,6 +12,7 @@ class gameServer {
     constructor(destination) {
         this.ws = new WebSocket(`ws://${destination}`);
         this.ws.onclose = function (event) {
+            display.drawBackground();
             console.log("server connection lost ");
             global.entities = [];
             document.querySelector("#btnConnect").disabled = false;
@@ -30,28 +31,30 @@ class gameServer {
                         case "Wall":
                             obj = new Wall(message.body.x, message.body.y, message.body.width);
                             obj.id = message.body.id;
-                            global.entities.push(obj)
                             break;
                         case "RoundWall":
                             obj = new RoundWall(message.body.sx, message.body.sy, message.body.ex, message.body.ey, message.body.r);
                             obj.id = message.body.id;
-                            global.entities.push(obj)
                             break;
                         case "Ball":
                             obj = new Ball(message.body.x, message.body.y, message.body.r);
                             obj.id = message.body.id;
-                            global.entities.push(obj)
                             break;
                         case "Portal":
                             obj = new Portal(message.body.x, message.body.y, message.body.width);
                             obj.id = message.body.id;
-                            obj.color = message.body.color;
-                            global.entities.push(obj)
+                            if (message.body.playerID == global.playerID) {
+                                obj.color = message.body.color;
+                            }
+                            else {
+                                obj.color = "pink";
+                            }
                             break;
-
                         default:
                             break;
                     }
+                    if (obj)
+                        global.entities.push(obj)
                     break;
                 case "move":
                     let current = global.entities.find(e => { return e.id == message.id });

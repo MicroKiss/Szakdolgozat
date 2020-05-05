@@ -29,7 +29,7 @@ class Server {
             connection.on('close', function () {
                 console.log("player left with id: ", connection.playerID);
                 global.playerID--;
-                if(connections[0])
+                if (connections[0])
                     connections[0].playerID = 1;
                 let index = connections.indexOf(connection);
                 if (index > -1)
@@ -108,42 +108,45 @@ class Server {
                         break;
                 }
             });
-
-
         });
     }
 
 
 }
-Server.prototype.sendRemoveByID = function (conns, id) {
+    Server.prototype.sendRemoveByID = function (conns, id) {
     conns.forEach(conn => {
-        conn.send(JSON.stringify({
-            command: "remove", id: id
-        }));
-    })
+    conn.send(JSON.stringify({
+    command: "remove", id: id
+}));
+})
 };
-Server.prototype.sendCreate = function (conns, entity) {
+    Server.prototype.sendCreate = function (conns, entity) {
     conns.forEach(conn => {
-        conn.send(JSON.stringify({
-            command: "create", type: entity.constructor.name, body:
-            {
-                id: entity.id, sx: entity.sx, sy: entity.sy, ex: entity.ex, ey: entity.ey, x: entity.x, y: entity.y, color: entity.color, width: entity.width, r: entity.r
-            }
-        }));
-    })
+
+    let message_to_send = {
+    command: "create", type: entity.constructor.name, body:
+{
+    id: entity.id, sx: entity.sx, sy: entity.sy, ex: entity.ex, ey: entity.ey, x: entity.x, y: entity.y, color: entity.color, width: entity.width, r: entity.r
+}
+};
+    if (entity.constructor.name === Portal.name) {
+
+    message_to_send.body.playerID = entity.playerID;
+}
+    conn.send(JSON.stringify(message_to_send));
+})
 };
 
 
 function newPortal(message, e) {
     let newEntity = new Portal(e.x, e.y, e.width, message.playerID, message.body.color);
-
     if (message.playerID == 1) {
         if (newEntity.color == "red") {
             if (global.redPortal_1) {
                 let index = global.entities.indexOf(global.redPortal_1);
                 global.entities.splice(index, 1);
-                Server.prototype.sendRemoveByID(connections, global.redPortal_1.id)
-                global.redPortal_1.portalWall.shape  = engine.shapes.SQUARE;
+                Server.prototype.sendRemoveByID(connections, global.redPortal_1.id);
+                global.redPortal_1.portalWall.shape = engine.shapes.SQUARE;
             }
             global.redPortal_1 = newEntity;
         }
@@ -151,14 +154,16 @@ function newPortal(message, e) {
             if (global.bluePortal_1) {
                 let index = global.entities.indexOf(global.bluePortal_1);
                 global.entities.splice(index, 1);
-                Server.prototype.sendRemoveByID(connections, global.bluePortal_1.id)
-                global.bluePortal_1.portalWall.shape  = engine.shapes.SQUARE;
+                Server.prototype.sendRemoveByID(connections, global.bluePortal_1.id);
+                global.bluePortal_1.portalWall.shape = engine.shapes.SQUARE;
             }
             global.bluePortal_1 = newEntity;
         }
         if (global.bluePortal_1 && global.redPortal_1) {
-            global.bluePortal_1.portalWall.shape  = null;
-            global.redPortal_1.portalWall.shape  = null;
+            global.bluePortal_1.portalWall.shape = null;
+            global.redPortal_1.portalWall.shape = null;
+            global.bluePortal_1.portalWall.color = "black";
+            global.redPortal_1.portalWall.color = "black";
         }
     }
     else if (message.playerID == 2) {
@@ -166,8 +171,8 @@ function newPortal(message, e) {
             if (global.redPortal_2) {
                 let index = global.entities.indexOf(global.redPortal_2);
                 global.entities.splice(index, 1);
-                Server.prototype.sendRemoveByID(connections, global.redPortal_2.id)
-                global.redPortal_2.portalWall.shape  = engine.shapes.SQUARE;
+                Server.prototype.sendRemoveByID(connections, global.redPortal_2.id);
+                global.redPortal_2.portalWall.shape = engine.shapes.SQUARE;
             }
             global.redPortal_2 = newEntity;
         }
@@ -175,14 +180,14 @@ function newPortal(message, e) {
             if (global.bluePortal_2) {
                 let index = global.entities.indexOf(global.bluePortal_2);
                 global.entities.splice(index, 1);
-                Server.prototype.sendRemoveByID(connections, global.bluePortal_2.id)
-                global.bluePortal_2.portalWall.shape  = engine.shapes.SQUARE;
+                Server.prototype.sendRemoveByID(connections, global.bluePortal_2.id);
+                global.bluePortal_2.portalWall.shape = engine.shapes.SQUARE;
             }
             global.bluePortal_2 = newEntity;
         }
         if (global.bluePortal_2 && global.redPortal_2) {
-            global.bluePortal_2.portalWall.shape  = null;
-            global.redPortal_2.portalWall.shape  = null;
+            global.bluePortal_2.portalWall.shape = null;
+            global.redPortal_2.portalWall.shape = null;
         }
     }
     return newEntity;
@@ -194,33 +199,25 @@ function clearportals() {
         let index = global.entities.indexOf(global.bluePortal_1);
         global.entities.splice(index, 1);
         Server.prototype.sendRemoveByID(connections, global.bluePortal_1.id)
-        let newWall = new Wall(global.bluePortal_1.x, global.bluePortal_1.y, global.gridSize);
-        global.entities.push(newWall);
-        Server.prototype.sendCreate(connections, newWall);
+        global.bluePortal_1.portalWall.shape = engine.shapes.SQUARE;
     }
     if (global.redPortal_1) {
         let index = global.entities.indexOf(global.redPortal_1);
         global.entities.splice(index, 1);
         Server.prototype.sendRemoveByID(connections, global.redPortal_1.id)
-        let newWall = new Wall(global.redPortal_1.x, global.redPortal_1.y, global.gridSize);
-        global.entities.push(newWall);
-        Server.prototype.sendCreate(connections, newWall);
+        global.redPortal_1.portalWall.shape = engine.shapes.SQUARE;
     }
     if (global.bluePortal_2) {
         let index = global.entities.indexOf(global.bluePortal_2);
         global.entities.splice(index, 1);
         Server.prototype.sendRemoveByID(connections, global.bluePortal_2.id)
-        let newWall = new Wall(global.bluePortal_2.x, global.bluePortal_2.y, global.gridSize);
-        global.entities.push(newWall);
-        Server.prototype.sendCreate(connections, newWall);
+        global.bluePortal_2.portalWall.shape = engine.shapes.SQUARE;
     }
     if (global.redPortal_2) {
         let index = global.entities.indexOf(global.redPortal_2);
         global.entities.splice(index, 1);
         Server.prototype.sendRemoveByID(connections, global.redPortal_2.id)
-        let newWall = new Wall(global.redPortal_2.x, global.redPortal_2.y, global.gridSize);
-        global.entities.push(newWall);
-        Server.prototype.sendCreate(connections, newWall);
+        global.redPortal_2.portalWall.shape = engine.shapes.SQUARE;
     }
     global.redPortal_2 = null;
     global.bluePortal_2 = null;

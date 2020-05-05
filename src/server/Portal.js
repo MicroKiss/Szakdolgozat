@@ -11,14 +11,16 @@ class Portal extends Wall {
         this.color = color;
         this.shape = engine.shapes.PORTAL;
 
-
-        this.portalWall = engine.point_meeting(this.x + this.width / 2, this.y + this.height / 2, Wall);
-
-
         this.portalRect = {
             x: this.x + 5, y: this.y + 5,
             width: this.width - 10, height: this.height - 10
         };
+
+        this.portalWall = engine.place_meeting(this.portalRect.x, this.portalRect.y,
+            this.portalRect.width, this.portalRect.height, Wall);
+
+
+
         this.targetPortal = null;
 
         if (this.playerID == 1) {
