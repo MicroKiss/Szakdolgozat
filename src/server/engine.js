@@ -437,7 +437,7 @@ engine.roundRectBallCollision = function (rect, ball) {
     // same way we check if two balls have collided
     let fDistance = Math.sqrt((ball.x - fClosestPointX) * (ball.x - fClosestPointX) + (ball.y - fClosestPointY) * (ball.y - fClosestPointY));
 
-    engine.ballBallCollision(ball, { x: fClosestPointX, y: fClosestPointY, r: rect.r, vx: 0, vy: 0, mass: 200 })
+    engine.ballBallCollision(ball, { x: fClosestPointX, y: fClosestPointY, r: rect.r, vx: 0, vy: 0, mass: ball.mass * 1.5 })
 
     // Calculate displacement required
     let fOverlap = 1 * (fDistance - ball.r - rect.r);

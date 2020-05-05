@@ -56,6 +56,8 @@ class Server {
                                             return;
                                         if (engine.point_meeting(e.x + e.width / 2, e.y + 3 * e.width / 2, Portal))
                                             return;
+                                        if (engine.point_meeting(e.x + e.width / 2, e.y + e.width / 2, Portal))
+                                            return;
 
                                         newEntity = new Portal(e.x, e.y, e.width, message.body.color);
 
