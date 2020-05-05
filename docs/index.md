@@ -2,8 +2,10 @@
 > hatarido : majus 15 (eddigre kell bekotve leadni)
 
 ## jelenlegi demok:
-[Portalok](src)
-[Fizika](srcphysics)
+
+_you can change the physics precision by pressing 'L'_
+- [Portalok](src)
+- [Fizika](srcphysics)
 
 <p>
 <small>

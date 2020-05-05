@@ -13,8 +13,6 @@ import mapLoader from "./mapLoader.js"
 Map = new mapLoader();
 
 
-alert("you can change the physics precision by pressing 'L'")
-
 function main() {
 
     engine.simulatePhysics(global.entities);

@@ -66,6 +66,19 @@ document.onmouseup = function (e) {
 
 
 
+document.onkeydown = function (e) {
+    switch (e.keyCode) {
+        case 'L'.charCodeAt(0):
+            global.PhysicsPrecision += 100;
+            global.PhysicsPrecision = 100 + (global.PhysicsPrecision - 100) % 1100;
+            engine.PhysicsPrecision = 1 / global.PhysicsPrecision;
+            break;
+        default:
+            break;
+    }
+}
+
+
 gameLogic.update = function () {
     if (selectedball && mouseBtn == 0) {
         let vectorx = mouseX - selectedball.x;
