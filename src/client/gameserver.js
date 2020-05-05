@@ -13,16 +13,17 @@ class gameServer {
         this.ws = new WebSocket(`ws://${destination}`);
         this.ws.onclose = function (event) {
             console.log("server connection lost ");
-
+            global.entities = [];
             document.querySelector("#btnConnect").disabled = false;
             global.gameIsInActive = true;
         }
         global.ws = this.ws;
         this.ws.onmessage = function (event) {
-
-
             const message = JSON.parse(event.data);
             switch (message.command) {
+                case "playerID":
+                    global.playerID = message.playerID;
+                    break;
                 case "create":
                     let obj;
                     switch (message.type) {
@@ -51,7 +52,6 @@ class gameServer {
                         default:
                             break;
                     }
-
                     break;
                 case "move":
                     let current = global.entities.find(e => { return e.id == message.id });
@@ -59,7 +59,6 @@ class gameServer {
                     current.y = message.body.y;
                     break;
                 case "remove":
-
                     let index = global.entities.indexOf(global.entities.find(e => { return e.id == message.id }));
                     if (index > -1)
                         global.entities.splice(index, 1);

@@ -5,10 +5,14 @@ const Wall = require('./Wall.js');
 
 class Portal extends Wall {
 
-    constructor(x, y, w, color) {
+    constructor(x, y, w, playerID, color) {
         super(x, y, w, w);
+        this.playerID = playerID;
         this.color = color;
         this.shape = engine.shapes.PORTAL;
+
+
+        this.portalWall = engine.point_meeting(this.x + this.width / 2, this.y + this.height / 2, Wall);
 
 
         this.portalRect = {
@@ -17,13 +21,29 @@ class Portal extends Wall {
         };
         this.targetPortal = null;
 
-        if (this.color == "red" && global.bluePortal) {
-            this.targetPortal = global.bluePortal;
-            global.bluePortal.targetPortal = this;
+        if (this.playerID == 1) {
+            if (this.color == "red" && global.bluePortal_1) {
+                this.targetPortal = global.bluePortal_1;
+                global.bluePortal_1.targetPortal = this;
+                this.portalWall.shape = null;
+            }
+            else if (this.color == "blue" && global.redPortal_1) {
+                this.targetPortal = global.redPortal_1;
+                global.redPortal_1.targetPortal = this;
+                this.portalWall.shape = null;
+            }
         }
-        else if (this.color == "blue" && global.redPortal) {
-            this.targetPortal = global.redPortal;
-            global.redPortal.targetPortal = this;
+        else if (this.playerID == 2) {
+            if (this.color == "red" && global.bluePortal_2) {
+                this.targetPortal = global.bluePortal_2;
+                global.bluePortal_2.targetPortal = this;
+                this.portalWall.shape = null;
+            }
+            else if (this.color == "blue" && global.redPortal_2) {
+                this.targetPortal = global.redPortal_2;
+                global.redPortal_2.targetPortal = this;
+                this.portalWall.shape = null;
+            }
         }
 
         this.entrance = "above";

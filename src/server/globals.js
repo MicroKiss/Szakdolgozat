@@ -7,7 +7,10 @@ module.exports = {
     gridSize: 48,
     ballRadius: 10,
     objID: 0,
-    redPortal: null,
-    bluePortal: null,
+    redPortal_1: null,
+    bluePortal_1: null,
+    redPortal_2: null,
+    bluePortal_2: null,
+    playerID: 1,
     ws: null,
 };

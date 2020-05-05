@@ -9,17 +9,12 @@ const _ = null;
 const B = Ball;
 
 export default class mapLoader {
-
     constructor() {
         this.setMap();
     };
 
-
-
-
     setMap()  //you can switch between gamerooms with this function
     {
-
         var palya = [];
         palya = [
             [W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W],
@@ -45,7 +40,6 @@ export default class mapLoader {
         global.entities.push(new RoundWall(5 * global.gridSize, 10 * global.gridSize, 10 * global.gridSize, 10 * global.gridSize, global.ballRadius));
         global.entities.push(new RoundWall(10 * global.gridSize, 5 * global.gridSize, 10 * global.gridSize, 10 * global.gridSize, global.ballRadius));
         global.entities.push(new RoundWall(5 * global.gridSize, 10 * global.gridSize, 5 * global.gridSize, 8 * global.gridSize, global.ballRadius));
-
 
         global.entities.push(new RoundWall(18 * global.gridSize, 10 * global.gridSize, 20 * global.gridSize, 8 * global.gridSize, global.ballRadius));
         global.entities.push(new RoundWall(24 * global.gridSize, 13 * global.gridSize, 20 * global.gridSize, 12 * global.gridSize, global.ballRadius));

@@ -1,0 +1,14 @@
+2 játékosnak külön portál
+- blueportal1,2 redportal1,2 és amikor belép kap egy id-t a játékos és mindig azt küldözgeti
+
+grafikus level editor ?
+
+fomenü
+
+több pálya
+victory
+
+grafikus tutorial
+
+test map
+( mint egy valvos test map :P)
