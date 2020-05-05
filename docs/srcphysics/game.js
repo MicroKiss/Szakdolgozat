@@ -12,10 +12,6 @@ import mapLoader from "./mapLoader.js"
 
 
 
-canvas.width = innerWidth - 10;
-canvas.height = innerHeight - 20;
-
-
 Map = new mapLoader();
 
 

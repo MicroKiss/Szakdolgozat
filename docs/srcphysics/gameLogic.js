@@ -14,14 +14,16 @@ var mouseBtn;
 
 
 document.oncontextmenu = (e) => { e.preventDefault(); };
+var canvasObj = document.querySelector("canvas");
 
 
-document.onmousemove = (e) => {
+canvasObj.onmousemove = (e) => {
 
     var rect = canvas.getBoundingClientRect();
     mouseX = e.clientX - rect.left;
+    mouseX /= innerWidth / 1920;
     mouseY = e.clientY - rect.top;
-
+    mouseY /= innerHeight / 1080;
 }
 
 document.onmousedown = function (e) {
