@@ -5,7 +5,7 @@ export default class Ball {
         this.x = x;
         this.y = y;
         this.r = r;
-        this.color = "yellow";
+        this.color = "red";
     }
 
     draw(ctx) {

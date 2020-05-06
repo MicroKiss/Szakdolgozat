@@ -12,8 +12,6 @@ class RoundWall extends engine.Entity {
         this.ey = ey;
         this.r = r;
         this.mass = Infinity;
-
-        this.color = "#" + ((1 << 24) * Math.random() | 0).toString(16);
     }
 
 }

@@ -15,7 +15,7 @@ window.onresize = function (event) {
 
 };
 
-display.backgroundImage.src = './assets/images/backgroundTest.jpg';
+//display.backgroundImage.src = './gamefiles/assets/images/backgroundTest.jpg';
 display.drawBackground = function () {
 
     if (this.backgroundImage.src) {

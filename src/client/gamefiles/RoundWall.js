@@ -12,7 +12,7 @@ export default class RoundWall {
         this.ey = ey;
         this.r = r;
 
-        this.color = "yellow";
+        this.color = "chocolate";
     }
 
 

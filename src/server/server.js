@@ -104,6 +104,16 @@ class Server {
                     case 'clearportals':
                         clearportals();
                         break;
+                    case 'moveBall':
+                        global.entities.forEach(e => {
+                            if (e.id == message.body.ballID) {
+                                e.vx = 10 * (message.body.x - e.x);
+                                e.vy = 10 * (message.body.y - e.y);
+                                return false;
+                            }
+                        });
+
+                        break;
                     default:
                         break;
                 }
@@ -113,28 +123,28 @@ class Server {
 
 
 }
-    Server.prototype.sendRemoveByID = function (conns, id) {
+Server.prototype.sendRemoveByID = function (conns, id) {
     conns.forEach(conn => {
-    conn.send(JSON.stringify({
-    command: "remove", id: id
-}));
-})
+        conn.send(JSON.stringify({
+            command: "remove", id: id
+        }));
+    })
 };
-    Server.prototype.sendCreate = function (conns, entity) {
+Server.prototype.sendCreate = function (conns, entity) {
     conns.forEach(conn => {
 
-    let message_to_send = {
-    command: "create", type: entity.constructor.name, body:
-{
-    id: entity.id, sx: entity.sx, sy: entity.sy, ex: entity.ex, ey: entity.ey, x: entity.x, y: entity.y, color: entity.color, width: entity.width, r: entity.r
-}
-};
-    if (entity.constructor.name === Portal.name) {
+        let message_to_send = {
+            command: "create", type: entity.constructor.name, body:
+            {
+                id: entity.id, sx: entity.sx, sy: entity.sy, ex: entity.ex, ey: entity.ey, x: entity.x, y: entity.y, color: entity.color, width: entity.width, r: entity.r
+            }
+        };
+        if (entity.constructor.name === Portal.name) {
 
-    message_to_send.body.playerID = entity.playerID;
-}
-    conn.send(JSON.stringify(message_to_send));
-})
+            message_to_send.body.playerID = entity.playerID;
+        }
+        conn.send(JSON.stringify(message_to_send));
+    })
 };
 
 

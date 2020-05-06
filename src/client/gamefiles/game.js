@@ -12,8 +12,6 @@ document.querySelector("#btnConnect").addEventListener('click', e => {
     global.gameIsInActive = false;
     document.querySelector("#btnConnect").disabled = true;
     main();
-
-
 })
 
 
@@ -25,3 +23,4 @@ function main() {
     requestAnimationFrame(main);
 
 }
+
