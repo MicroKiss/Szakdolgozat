@@ -48,18 +48,33 @@ class Portal extends Wall {
             }
         }
 
-        this.entrance = "above";
-        if (!engine.point_meeting(this.x + this.width / 2, this.y + 3 * this.height / 2, Wall))
+        this.entrance = null;
+
+        let entrances = 0;
+        if (!engine.point_meeting(this.x + this.width / 2, this.y - this.height / 2, Wall)) {
+            this.entrance = "above";
+            entrances++;
+        }
+        if (!engine.point_meeting(this.x + this.width / 2, this.y + 3 * this.height / 2, Wall)) {
             this.entrance = "under";
-        else if (!engine.point_meeting(this.x - this.width / 2, this.y + this.height / 2, Wall))
+            entrances++;
+        }
+        if (!engine.point_meeting(this.x - this.width / 2, this.y + this.height / 2, Wall)) {
             this.entrance = "left";
-        else if (!engine.point_meeting(this.x + 3 * this.width / 2, this.y + this.height / 2, Wall))
+            entrances++;
+        }
+        if (!engine.point_meeting(this.x + 3 * this.width / 2, this.y + this.height / 2, Wall)) {
             this.entrance = "right";
+            entrances++;
+        }
+        if (entrances != 1)
+            this.entrance = null;
+
     }
 
     physicsUpdate(deltaTime) {
 
-        if (!this.targetPortal)
+        if (!this.targetPortal || !this.entrance)
             return;
         const others = engine.index.query(this);
 

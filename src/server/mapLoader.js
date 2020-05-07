@@ -111,8 +111,7 @@ class mapLoader {
         res[0] += 'm';
         res[1]++;
         res = res[0] + res[1];
-        //this.setMap(res)
-        this.setMap("e1m4")
+        this.setMap(res)
 
     }
 
