@@ -8,6 +8,7 @@ import Portal from "./objects/Portal.js";
 import display from "./display.js";
 import gameLogic from "./gameLogic.js";
 import Destination from "./objects/Destination.js";
+import Unreachable from "./objects/Unreachable.js";
 
 class gameServer {
     constructor(destination) {
@@ -56,6 +57,10 @@ class gameServer {
                             obj = new Destination(message.body.x, message.body.y, message.body.width, message.body.height);
                             obj.id = message.body.id;
                             break;
+                        case "Unreachable":
+                            obj = new Unreachable(message.body.x, message.body.y, message.body.width, message.body.height);
+                            obj.id = message.body.id;
+                            break;
                         default:
                             break;
                     }
@@ -76,6 +81,11 @@ class gameServer {
                     break;
                 case "removeAll":
                     global.entities = [];
+                    break;
+                case "releaseBall":
+                    if (global.selectedball.id == message.id)
+                        global.selectedball = null;
+
                     break;
 
                 default:

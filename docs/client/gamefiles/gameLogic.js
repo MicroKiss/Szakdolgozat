@@ -13,7 +13,7 @@ document.oncontextmenu = (e) => { e.preventDefault(); };
 
 var mouseX = 0;
 var mouseY = 0;
-var selectedball = null;
+global.selectedball = null;
 canvasObj.onmousemove = (e) => {
 
     var rect = canvasObj.getBoundingClientRect();
@@ -26,8 +26,8 @@ canvasObj.onmousemove = (e) => {
 
 
 function sendRegularly() {
-    if (selectedball) {
-        global.ws.send(JSON.stringify({ playerID: global.playerID, command: 'moveBall', body: { x: mouseX, y: mouseY, ballID: selectedball.id } }));
+    if (global.selectedball) {
+        global.ws.send(JSON.stringify({ playerID: global.playerID, command: 'moveBall', body: { x: mouseX, y: mouseY, ballID: global.selectedball.id } }));
         requestAnimationFrame(sendRegularly);
     }
 
@@ -45,7 +45,7 @@ canvasObj.onmousedown = function (e) {
         global.entities.forEach(e => {
             if (e.constructor.name === "Ball") {
                 if (Math.hypot(mouseX - e.x, mouseY - e.y) < e.r) {
-                    selectedball = e;
+                    global.selectedball = e;
                 }
             }
         });
@@ -83,7 +83,7 @@ canvasObj.onmouseup = function (e) {
     e.preventDefault();
 
     if (e.button === 0 /* LMB*/) {
-        selectedball = null;
+        global.selectedball = null;
     }
 }
 

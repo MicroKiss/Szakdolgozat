@@ -1,11 +1,6 @@
-grafikus level editor ?
-
-fomen�
-
-t�bb p�lya
+﻿
 victory
 
-grafikus tutorial
 
 test map
 ( mint egy valvos test map :P)

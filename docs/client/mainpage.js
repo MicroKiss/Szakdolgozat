@@ -17,7 +17,7 @@ home.innerHTML = `
     </div>
     <div class="col-sm-7">
         
-        <h2>Welcome,</h2>
+        <h2>Welcome</h2>
         <p>this is a multyplayer game based on the famous 
             <a href="https://store.steampowered.com/app/400/Portal/"> Portal</a> game.
             You can play at the <strong>Play</strong> tab above or 

@@ -5,4 +5,6 @@ export default {
     ws: null,
     gameIsInActive: true,
     playerID: null,
+    selectedball: null,
+
 }
