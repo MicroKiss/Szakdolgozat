@@ -1,0 +1,10 @@
+
+img{
+    border: 3px solid rgb(71, 71, 71);
+}
+
+p{
+    font-size: 20px;
+    text-align: justify;
+    text-justify: inter-word;
+}

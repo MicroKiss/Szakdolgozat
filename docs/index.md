@@ -3,9 +3,10 @@
 
 ## jelenlegi demok:
 
-_you can change the physics precision by pressing 'L'_
+_you can change the physics precision in the demo by pressing 'L'_
 - [Portalok](src)
 - [Fizika](srcphysics)
+- [Menu](client)
 
 <p>
 <small>
