@@ -2,9 +2,7 @@ const engine = require('../engine.js');
 const Ball = require('../objects/Ball.js');
 const global = require('../globals.js')
 
-
-//square shaped wall
-
+//goal for everry level
 class Destination extends engine.Entity {
 
     constructor(x, y, w, h = w) {
@@ -24,24 +22,6 @@ class Destination extends engine.Entity {
 
 
     }
-
-
-
-    getCorners() {
-        /*  
-             B     A
-              ****
-              ****   
-              ****
-            C       D
-        */
-        let A = { x: this.getLeft() + this.getWidth(), y: this.getTop() };
-        let B = { x: this.getLeft(), y: this.getTop() };
-        let C = { x: this.getLeft(), y: this.getTop() + this.getHeight() };
-        let D = { x: this.getLeft() + this.getWidth(), y: this.getTop() + this.getHeight() };
-        return { A: A, B: B, C: C, D: D };
-    }
-
 }
 
 module.exports = Destination;

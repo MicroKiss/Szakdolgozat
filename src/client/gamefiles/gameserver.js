@@ -8,6 +8,7 @@ import Portal from "./objects/Portal.js";
 import display from "./display.js";
 import gameLogic from "./gameLogic.js";
 import Destination from "./objects/Destination.js";
+import Unreachable from "./objects/Unreachable.js";
 
 class gameServer {
     constructor(destination) {
@@ -54,6 +55,10 @@ class gameServer {
                             break;
                         case "Destination":
                             obj = new Destination(message.body.x, message.body.y, message.body.width, message.body.height);
+                            obj.id = message.body.id;
+                            break;
+                        case "Unreachable":
+                            obj = new Unreachable(message.body.x, message.body.y, message.body.width, message.body.height);
                             obj.id = message.body.id;
                             break;
                         default:

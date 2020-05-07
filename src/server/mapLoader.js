@@ -2,8 +2,9 @@ const global = require('./globals.js');
 const { maps, roundWalls } = require('./maps/maps.js');
 const Ball = require('./objects/Ball.js');
 const Wall = require('./objects/Wall.js');
-const Destination = require('./objects/Destination.js');
 const RoundWall = require('./objects/RoundWall.js');
+const Destination = require('./objects/Destination.js');
+const Unreachable = require('./objects/Unreachable.js');
 
 
 const W = Wall;
@@ -11,6 +12,7 @@ const _ = null;
 const B = Ball;
 const R = RoundWall;
 const D = Destination;
+const U = Unreachable;
 
 
 
@@ -62,6 +64,14 @@ class mapLoader {
                                     global.gridSize * (j - helper.destination[0]), global.gridSize * (i - helper.destination[1]));
                             }
 
+                            break;
+                        case Unreachable:
+                            if (helper.unreachable == undefined)
+                                helper.unreachable = [j, i];
+                            else {
+                                obj = new type(helper.unreachable[0] * global.gridSize, helper.unreachable[1] * global.gridSize,
+                                    global.gridSize * (j - helper.unreachable[0]), global.gridSize * (i - helper.unreachable[1]));
+                            }
                             break;
                         default:
                             break;

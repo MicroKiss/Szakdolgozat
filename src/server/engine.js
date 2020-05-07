@@ -19,6 +19,7 @@ var engine = {
         SQUARE: "square",
         DESTINATION: "destination",
         PORTAL: "portal",
+        UNREACHABLE: "unreachable",
     },
 
 };
@@ -93,19 +94,24 @@ engine.doEntitiesIntersect = function (first, second) {
 
 
     if (first.shape == second.shape) {
-        if (first.shape == engine.shapes.RECTANGLE || first.shape == engine.shapes.SQUARE || first.shape == engine.shapes.PORTAL)
+        if (first.shape == engine.shapes.RECTANGLE || first.shape == engine.shapes.SQUARE || first.shape == engine.shapes.PORTAL ||
+            first.shape == engine.shapes.UNREACHABLE)
             return engine.rectangleIntersect(first.x, first.y, first.width, first.height, second.x, second.y, second.width, second.height);
         if (first.shape == engine.shapes.CIRCLE)
             return engine.circleIntersect(first.x, first.y, first.r, second.x, second.y, second.r);
     }
 
 
-    if ((first.shape == engine.shapes.RECTANGLE || first.shape == engine.shapes.SQUARE || first.shape == engine.shapes.PORTAL) && (second.shape == engine.shapes.RECTANGLE || second.shape == engine.shapes.SQUARE || second.shape == engine.shapes.PORTAL))
+    if ((first.shape == engine.shapes.RECTANGLE || first.shape == engine.shapes.SQUARE ||
+        first.shape == engine.shapes.PORTAL || first.shape == engine.shapes.UNREACHABLE)
+        && (second.shape == engine.shapes.RECTANGLE || second.shape == engine.shapes.SQUARE ||
+            second.shape == engine.shapes.PORTAL || second.shape == engine.shapes.UNREACHABLE))
         return engine.rectangleIntersect(first.x, first.y, first.width, first.height, second.x, second.y, second.width, second.height);
 
 
 
-    if ((first.shape == engine.shapes.SQUARE || first.shape == engine.shapes.RECTANGLE || first.shape == engine.shapes.PORTAL) && second.shape == engine.shapes.CIRCLE)
+    if ((first.shape == engine.shapes.SQUARE || first.shape == engine.shapes.RECTANGLE ||
+        first.shape == engine.shapes.PORTAL || first.shape == engine.shapes.UNREACHABLE) && second.shape == engine.shapes.CIRCLE)
         return engine.rectCircleColliding(first, second);
     // if ((second.shape == engine.shapes.SQUARE || second.shape == engine.shapes.RECTANGLE) && first.shape == engine.shapes.CIRCLE)
     //     return engine.rectCircleColliding(second, first);

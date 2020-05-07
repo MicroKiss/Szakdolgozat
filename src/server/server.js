@@ -5,6 +5,7 @@ const global = require('./globals.js');
 const engine = require('./engine.js');
 const Ball = require('./objects/Ball.js');
 const Portal = require('./objects/Portal.js');
+const Unreachable = require('./objects/Unreachable.js');
 const Wall = require('./objects/Wall.js');
 
 var connections = [];
@@ -35,7 +36,7 @@ class Server {
                 if (index > -1)
                     connections.splice(index, 1);
                 clearInterval(timer);
-                clearportals();
+                Server.prototype.clearportals();
             });
 
             //send the map data once 
@@ -102,16 +103,20 @@ class Server {
                         }
                         break;
                     case 'clearportals':
-                        clearportals();
+                        Server.prototype.clearportals();
                         break;
                     case 'moveBall':
-                        global.entities.forEach(e => {
-                            if (e.id == message.body.ballID) {
-                                e.vx = 10 * (message.body.x - e.x);
-                                e.vy = 10 * (message.body.y - e.y);
-                                return false;
-                            }
-                        });
+                        if (engine.point_meeting(message.body.x, message.body.y, Unreachable))
+                            console.log("unreachable");
+
+                        else
+                            global.entities.forEach(e => {
+                                if (e.id == message.body.ballID) {
+                                    e.vx = 10 * (message.body.x - e.x);
+                                    e.vy = 10 * (message.body.y - e.y);
+                                    return false;
+                                }
+                            });
 
                         break;
                     default:
@@ -159,7 +164,7 @@ Server.prototype.sendCreateAll = function (conns = connections) {
         Server.prototype.sendCreate(conns, entity);
     })
 };
-Server.prototype.clearportals= function() {
+Server.prototype.clearportals = function () {
     if (global.bluePortal_1) {
         let index = global.entities.indexOf(global.bluePortal_1);
         global.entities.splice(index, 1);

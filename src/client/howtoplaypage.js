@@ -3,12 +3,29 @@ var howtoplay = document.querySelector("#howtoplaytab");
 howtoplay.innerHTML = `
 <div data-spy="scroll data-target="#tutorialnavbar" data-offset="50">
 
-<nav class="navbar navbar-expand-sm">
+<nav class="navbar navbar-expand-sm bg-light navbar-light">
   <ul class="navbar-nav">
-    <li><a class="nav-link" href="#dragndrop">Drag&Drop</a></li>
-    <li><a class="nav-link" href="#portals1">Portals.1</a></li>
-    <li><a class="nav-link" href="#portals2">.2</a></li>
-    <li><a class="nav-link" href="#goal">goal</a></li>
+  <h3 class="text-primary">Basics:</h3>
+    <a class="nav-link" href="#dragndrop">
+        <button type="button" class="btn btn-outline-info">
+        Drag&Drop
+        </button>
+    </a>
+    <a class="nav-link" href="#portals1">
+        <button type="button" class="btn btn-outline-info">
+        Portals I
+        </button>
+    </a>
+    <a class="nav-link" href="#portals2">
+        <button type="button" class="btn btn-outline-info">
+        Portals II
+        </button></a>
+    <a class="nav-link" href="#goal">
+        <button type="button" class="btn btn-outline-info">
+        goal
+        </button>
+    </a>
+    <h3 class="text-info">Tips:</h3>
     </ul>
 </nav>
     <h2> Basics</h2>

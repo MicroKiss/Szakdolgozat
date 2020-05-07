@@ -8,3 +8,10 @@ p{
     text-align: justify;
     text-justify: inter-word;
 }
+
+h3{
+    text-align: center;
+    margin: 0;
+    top: 50%;
+    transform: translateY(15%);
+}
