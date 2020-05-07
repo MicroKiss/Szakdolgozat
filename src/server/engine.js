@@ -17,6 +17,7 @@ var engine = {
         RECTANGLE: "rectangle",
         ROUNDRECTANGLE: "roundrectangle",
         SQUARE: "square",
+        DESTINATION: "destination",
         PORTAL: "portal",
     },
 

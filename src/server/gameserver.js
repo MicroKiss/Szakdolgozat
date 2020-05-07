@@ -7,9 +7,11 @@ const mapLoader = require('./mapLoader.js');
 
 const Server = require('./server.js');
 
-var Map = new mapLoader();
 
-var server = new Server(config.server_host, config.server_port);
+
+global.server = new Server(config.server_host, config.server_port);
+
+global.mapLoader = new mapLoader();
 
 function main() {
     engine.simulatePhysics(global.entities);

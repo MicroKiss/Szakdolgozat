@@ -3,9 +3,9 @@ var ws = require('ws');
 
 const global = require('./globals.js');
 const engine = require('./engine.js');
-const Ball = require('./Ball.js');
-const Portal = require('./Portal.js');
-const Wall = require('./Wall.js');
+const Ball = require('./objects/Ball.js');
+const Portal = require('./objects/Portal.js');
+const Wall = require('./objects/Wall.js');
 
 var connections = [];
 class Server {
@@ -16,7 +16,7 @@ class Server {
         this.ws.on('connection', function (connection) {
             if (global.playerID > 2) {
                 connection.close();
-                console.log("someone tried to conenct who couldn't fit in");
+                console.log("someone tried to connect who couldn't fit in");
 
                 return;
             }
@@ -55,7 +55,7 @@ class Server {
                     if (index > -1)
                         connections.splice(index, 1);
                 }
-            }, 10);
+            }, 20);
 
             connection.on('message', function (message) {
                 message = JSON.parse(message);
@@ -123,20 +123,21 @@ class Server {
 
 
 }
-Server.prototype.sendRemoveByID = function (conns, id) {
+Server.prototype.sendRemoveByID = function (conns = connections, id) {
     conns.forEach(conn => {
         conn.send(JSON.stringify({
             command: "remove", id: id
         }));
     })
 };
-Server.prototype.sendCreate = function (conns, entity) {
+Server.prototype.sendCreate = function (conns = connections, entity) {
     conns.forEach(conn => {
 
         let message_to_send = {
             command: "create", type: entity.constructor.name, body:
             {
-                id: entity.id, sx: entity.sx, sy: entity.sy, ex: entity.ex, ey: entity.ey, x: entity.x, y: entity.y, color: entity.color, width: entity.width, r: entity.r
+                id: entity.id, sx: entity.sx, sy: entity.sy, ex: entity.ex, ey: entity.ey, x: entity.x, y: entity.y,
+                color: entity.color, width: entity.width, height: entity.height, r: entity.r
             }
         };
         if (entity.constructor.name === Portal.name) {
@@ -146,7 +147,48 @@ Server.prototype.sendCreate = function (conns, entity) {
         conn.send(JSON.stringify(message_to_send));
     })
 };
-
+Server.prototype.sendRemoveAll = function (conns = connections) {
+    conns.forEach(conn => {
+        conn.send(JSON.stringify({
+            command: "removeAll"
+        }));
+    })
+};
+Server.prototype.sendCreateAll = function (conns = connections) {
+    global.entities.forEach(entity => {
+        Server.prototype.sendCreate(conns, entity);
+    })
+};
+Server.prototype.clearportals= function() {
+    if (global.bluePortal_1) {
+        let index = global.entities.indexOf(global.bluePortal_1);
+        global.entities.splice(index, 1);
+        Server.prototype.sendRemoveByID(connections, global.bluePortal_1.id)
+        global.bluePortal_1.portalWall.shape = engine.shapes.SQUARE;
+    }
+    if (global.redPortal_1) {
+        let index = global.entities.indexOf(global.redPortal_1);
+        global.entities.splice(index, 1);
+        Server.prototype.sendRemoveByID(connections, global.redPortal_1.id)
+        global.redPortal_1.portalWall.shape = engine.shapes.SQUARE;
+    }
+    if (global.bluePortal_2) {
+        let index = global.entities.indexOf(global.bluePortal_2);
+        global.entities.splice(index, 1);
+        Server.prototype.sendRemoveByID(connections, global.bluePortal_2.id)
+        global.bluePortal_2.portalWall.shape = engine.shapes.SQUARE;
+    }
+    if (global.redPortal_2) {
+        let index = global.entities.indexOf(global.redPortal_2);
+        global.entities.splice(index, 1);
+        Server.prototype.sendRemoveByID(connections, global.redPortal_2.id)
+        global.redPortal_2.portalWall.shape = engine.shapes.SQUARE;
+    }
+    global.redPortal_2 = null;
+    global.bluePortal_2 = null;
+    global.redPortal_1 = null;
+    global.bluePortal_1 = null;
+}
 
 function newPortal(message, e) {
     let newEntity = new Portal(e.x, e.y, e.width, message.playerID, message.body.color);
@@ -204,35 +246,6 @@ function newPortal(message, e) {
 }
 
 
-function clearportals() {
-    if (global.bluePortal_1) {
-        let index = global.entities.indexOf(global.bluePortal_1);
-        global.entities.splice(index, 1);
-        Server.prototype.sendRemoveByID(connections, global.bluePortal_1.id)
-        global.bluePortal_1.portalWall.shape = engine.shapes.SQUARE;
-    }
-    if (global.redPortal_1) {
-        let index = global.entities.indexOf(global.redPortal_1);
-        global.entities.splice(index, 1);
-        Server.prototype.sendRemoveByID(connections, global.redPortal_1.id)
-        global.redPortal_1.portalWall.shape = engine.shapes.SQUARE;
-    }
-    if (global.bluePortal_2) {
-        let index = global.entities.indexOf(global.bluePortal_2);
-        global.entities.splice(index, 1);
-        Server.prototype.sendRemoveByID(connections, global.bluePortal_2.id)
-        global.bluePortal_2.portalWall.shape = engine.shapes.SQUARE;
-    }
-    if (global.redPortal_2) {
-        let index = global.entities.indexOf(global.redPortal_2);
-        global.entities.splice(index, 1);
-        Server.prototype.sendRemoveByID(connections, global.redPortal_2.id)
-        global.redPortal_2.portalWall.shape = engine.shapes.SQUARE;
-    }
-    global.redPortal_2 = null;
-    global.bluePortal_2 = null;
-    global.redPortal_1 = null;
-    global.bluePortal_1 = null;
-}
+
 
 module.exports = Server;

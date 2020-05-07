@@ -1,16 +1,18 @@
 //kliens
 
 import global from "./globals.js";
-import Ball from "./Ball.js";
-import Wall from "./Wall.js";
-import RoundWall from "./RoundWall.js";
-import Portal from "./Portal.js";
+import Ball from "./objects/Ball.js";
+import Wall from "./objects/Wall.js";
+import RoundWall from "./objects/RoundWall.js";
+import Portal from "./objects/Portal.js";
 import display from "./display.js";
 import gameLogic from "./gameLogic.js";
+import Destination from "./objects/Destination.js";
 
 class gameServer {
     constructor(destination) {
         this.ws = new WebSocket(`ws://${destination}`);
+        global.ws = this.ws;
         this.ws.onclose = function (event) {
             display.drawBackground();
             console.log("server connection lost ");
@@ -18,7 +20,7 @@ class gameServer {
             document.querySelector("#btnConnect").disabled = false;
             global.gameIsInActive = true;
         }
-        global.ws = this.ws;
+
         this.ws.onmessage = function (event) {
             const message = JSON.parse(event.data);
             switch (message.command) {
@@ -50,6 +52,10 @@ class gameServer {
                                 obj.color = "pink";
                             }
                             break;
+                        case "Destination":
+                            obj = new Destination(message.body.x, message.body.y, message.body.width, message.body.height);
+                            obj.id = message.body.id;
+                            break;
                         default:
                             break;
                     }
@@ -58,13 +64,18 @@ class gameServer {
                     break;
                 case "move":
                     let current = global.entities.find(e => { return e.id == message.id });
-                    current.x = message.body.x;
-                    current.y = message.body.y;
+                    if (current) {
+                        current.x = message.body.x;
+                        current.y = message.body.y;
+                    }
                     break;
                 case "remove":
                     let index = global.entities.indexOf(global.entities.find(e => { return e.id == message.id }));
                     if (index > -1)
                         global.entities.splice(index, 1);
+                    break;
+                case "removeAll":
+                    global.entities = [];
                     break;
 
                 default:

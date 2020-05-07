@@ -1,4 +1,4 @@
-const engine = require('./engine.js');
+const engine = require('../engine.js');
 
 
 //square shaped wall

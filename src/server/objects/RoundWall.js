@@ -1,5 +1,5 @@
 
-const engine = require('./engine.js');
+const engine = require('../engine.js');
 
 
 class RoundWall extends engine.Entity {

@@ -13,4 +13,6 @@ module.exports = {
     bluePortal_2: null,
     playerID: 1,
     ws: null,
+    mapLoader: null,
+    server: null,
 };

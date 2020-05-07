@@ -1,6 +1,6 @@
-const engine = require('./engine.js');
+const engine = require('../engine.js');
 const Ball = require('./Ball.js');
-const global = require('./globals.js');
+const global = require('../globals.js');
 const Wall = require('./Wall.js');
 
 class Portal extends Wall {

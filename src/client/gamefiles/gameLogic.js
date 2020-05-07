@@ -1,6 +1,6 @@
-import Ball from "./Ball.js";
-import Wall from "./Wall.js";
-import Portal from "./Portal.js";
+import Ball from "./objects/Ball.js";
+import Wall from "./objects/Wall.js";
+import Portal from "./objects/Portal.js";
 import global from "./globals.js";
 import display from "./display.js";
 
