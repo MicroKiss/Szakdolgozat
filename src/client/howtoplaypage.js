@@ -22,11 +22,30 @@ howtoplay.innerHTML = `
         </button></a>
     <a class="nav-link" href="#goal">
         <button type="button" class="btn btn-outline-info">
-        goal
+        Goal
         </button>
     </a>
+    <a class="nav-link" href="#unreachable">
+        <button type="button" class="btn btn-outline-info">
+        Uncreachable
+        </button>
+    </a>
+
     <h3 class="text-info">Tips:</h3>
+
+    <a class="nav-link" href="#momentum">
+        <button type="button" class="btn btn-outline-info">
+        Momentum
+        </button>
+    </a>
+    <a class="nav-link" href="#gravity">
+        <button type="button" class="btn btn-outline-info">
+        Gravity
+        </button>
+    </a>
     </ul>
+
+
 </nav>
     <h2> Basics</h2>
     <div class="row" id="tutorial">
@@ -62,15 +81,43 @@ howtoplay.innerHTML = `
                         <p>Your goal is to <b>reach the green</b> rectangle <b>with one</b> of the <b>ball</b>s</b></p>
                     </td>
                     <td> 
-                    <img src="./assets/tutorials/goal.gif" alt="portals2">
-                </td>
+                    <img src="./assets/tutorials/goal.gif" alt="goal">
+                    </td>
                 </tr>
+                <tr id="unreachable">
+                    <td>
+                    <img src="./assets/tutorials/unreachable.gif" alt="unreachable">
+                    </td>
+                    <td> 
+                    <p>There are protected <b>areas</b> in the game where you <b>can't move ball</b>s</p>
+                    </td>
+                </tr>
+
             </tbody>
         </table>
     </div>
-    <h2>Useful tips</h2>
+<h2>Useful tips</h2>
     <div class="row" id="tips">
-        <p></p>
+        <table class="table table-striped">
+            <tbody>
+                <tr id="momentum">
+                    <td>
+                        <p><b>Use</b> the ball's <b>momentum</b> to reach your destination</p>
+                    </td>
+                    <td> 
+                        <img src="./assets/tutorials/velocity.gif" alt="momentum">
+                    </td>
+                </tr>
+                <tr id="gravity">
+                    <td>
+                        <img src="./assets/tutorials/gravity.gif" alt="gravity">
+                    </td>
+                    <td> 
+                        <p><b>Think</b> out of the box!<br> Use the portals to <b>reach</b> otherwise <b>unreachable</b> places</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 
 

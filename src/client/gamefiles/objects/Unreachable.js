@@ -6,7 +6,7 @@ export default class Unreachable {
         this.y = y;
         this.width = w;
         this.height = h;
-        this.color = "rgba(50, 50, 50, 0.5)";
+        this.color = "rgba(100, 10, 30, 0.3)";
     }
 
     draw(ctx) {
