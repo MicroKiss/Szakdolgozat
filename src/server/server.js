@@ -106,9 +106,9 @@ class Server {
                         Server.prototype.clearportals();
                         break;
                     case 'moveBall':
-                        if (engine.point_meeting(message.body.x, message.body.y, Unreachable))
-                            console.log("unreachable");
-
+                        if (engine.point_meeting(message.body.x, message.body.y, Unreachable)) {
+                            Server.prototype.sendReleaseBall(connections, message.body.ballID);
+                        }
                         else
                             global.entities.forEach(e => {
                                 if (e.id == message.body.ballID) {
@@ -132,6 +132,13 @@ Server.prototype.sendRemoveByID = function (conns = connections, id) {
     conns.forEach(conn => {
         conn.send(JSON.stringify({
             command: "remove", id: id
+        }));
+    })
+};
+Server.prototype.sendReleaseBall = function (conns = connections, id) {
+    conns.forEach(conn => {
+        conn.send(JSON.stringify({
+            command: "releaseBall", id: id
         }));
     })
 };

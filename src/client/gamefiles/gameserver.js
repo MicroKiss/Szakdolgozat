@@ -82,6 +82,11 @@ class gameServer {
                 case "removeAll":
                     global.entities = [];
                     break;
+                case "releaseBall":
+                    if (global.selectedball.id == message.id)
+                        global.selectedball = null;
+
+                    break;
 
                 default:
                     break;
