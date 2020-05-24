@@ -16,7 +16,7 @@ class gameServer {
         global.ws = this.ws;
         this.ws.onclose = function (event) {
             display.drawBackground();
-            console.log("server connection lost ");
+            alert("Server connection lost");
             global.entities = [];
             document.querySelector("#btnConnect").disabled = false;
             global.gameIsInActive = true;

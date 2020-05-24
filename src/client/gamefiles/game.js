@@ -16,8 +16,10 @@ document.querySelector("#btnConnect").addEventListener('click', e => {
 
 
 function main() {
-    if (global.gameIsInActive)
+    if (global.gameIsInActive) {
+        alert("Couldn't connect to server");
         return;
+    }
     display.draw(global.entities);
 
     requestAnimationFrame(main);

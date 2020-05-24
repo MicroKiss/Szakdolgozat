@@ -1,7 +1,7 @@
 
 module.exports = {
     deltaTime: 0.1,
-    PhysicsPrecision: 1000,
+    physicsPrecision: 1000,
     entities: [],
     dynamicObjects: [],
     gridSize: 48,

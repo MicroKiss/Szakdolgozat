@@ -6,10 +6,10 @@ var performanceNow = require("./node_modules/performance-now")
 
 var engine = {
     lastTick: performanceNow(),
-    deltaTime: 0.1,
-    PhysicsPrecision: 1 / global.PhysicsPrecision, // 1/this is the number of physics simulations /secs
-    gravity: 0.8 * 1000,//cus our screen is biiig
-    friction: 0.9,//0.9
+    deltaTime: null,
+    physicsPrecision: 1 / global.physicsPrecision, // 1/this is the number of physics simulations /secs
+    gravity: 0.8 * 1000,                           //how fast the balls drop
+    friction: 0.9,                                 //0.9
     index: {},
     indexSize: 256,
     shapes: {
@@ -21,9 +21,7 @@ var engine = {
         PORTAL: "portal",
         UNREACHABLE: "unreachable",
     },
-
 };
-
 
 
 
@@ -461,7 +459,7 @@ engine.simulatePhysics = function (entities) {
     engine.lastTick = now;
 
     // this way there is always a given number of phisycs updates in a second
-    let loopindex = Math.ceil(engine.deltaTime / engine.PhysicsPrecision);
+    let loopindex = Math.ceil(engine.deltaTime / engine.physicsPrecision);
 
     for (let i = 0; i < loopindex; i++) {
         let deltatime = engine.deltaTime / loopindex;
