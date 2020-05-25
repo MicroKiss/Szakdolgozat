@@ -19,8 +19,6 @@ class Portal extends Wall {
         this.portalWall = engine.place_meeting(this.portalRect.x, this.portalRect.y,
             this.portalRect.width, this.portalRect.height, Wall);
 
-
-
         this.targetPortal = null;
 
         if (this.playerID == 1) {

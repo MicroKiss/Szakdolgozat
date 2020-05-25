@@ -17,7 +17,6 @@ class Ball extends engine.Entity {
 
     physicsUpdate(deltaTime) {
         let gravityForce = engine.gravity * deltaTime;
-
         this.ax = -this.vx * engine.friction;
         this.ay = -this.vy * engine.friction * 0.5;
         this.vx += this.ax * deltaTime;

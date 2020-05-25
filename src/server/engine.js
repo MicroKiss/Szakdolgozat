@@ -535,6 +535,7 @@ engine.Entity = class Entity {
         this.height = h;
         this.shape = shape;
     }
+
     getDir() {
         let vdist = Math.hypot(this.vx, this.vy);
         if (this.vx == this.vy && this.vx == 0)
