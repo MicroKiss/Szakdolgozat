@@ -60,7 +60,6 @@ engine.roundRectCircleIntersect = function (rect, ball) {
     let fDistance = Math.sqrt((ball.x - fClosestPointX) * (ball.x - fClosestPointX) + (ball.y - fClosestPointY) * (ball.y - fClosestPointY));
 
     return (fDistance <= (ball.r + rect.r));
-
 }
 
 
@@ -82,14 +81,11 @@ engine.rectCircleColliding = function (rect, circle) {
     let dx = distX - rect.width / 2;
     let dy = distY - rect.height / 2;
     return (dx * dx + dy * dy <= (circle.r ** 2));
-
-
 }
 
 engine.doEntitiesIntersect = function (first, second) {
     if (first === second)
         return true;
-
 
     if (first.shape == second.shape) {
         if (first.shape == engine.shapes.RECTANGLE || first.shape == engine.shapes.SQUARE || first.shape == engine.shapes.PORTAL ||
@@ -99,25 +95,18 @@ engine.doEntitiesIntersect = function (first, second) {
             return engine.circleIntersect(first.x, first.y, first.r, second.x, second.y, second.r);
     }
 
-
     if ((first.shape == engine.shapes.RECTANGLE || first.shape == engine.shapes.SQUARE ||
         first.shape == engine.shapes.PORTAL || first.shape == engine.shapes.UNREACHABLE)
         && (second.shape == engine.shapes.RECTANGLE || second.shape == engine.shapes.SQUARE ||
             second.shape == engine.shapes.PORTAL || second.shape == engine.shapes.UNREACHABLE))
         return engine.rectangleIntersect(first.x, first.y, first.width, first.height, second.x, second.y, second.width, second.height);
 
-
-
     if ((first.shape == engine.shapes.SQUARE || first.shape == engine.shapes.RECTANGLE ||
         first.shape == engine.shapes.PORTAL || first.shape == engine.shapes.UNREACHABLE) && second.shape == engine.shapes.CIRCLE)
         return engine.rectCircleColliding(first, second);
-    // if ((second.shape == engine.shapes.SQUARE || second.shape == engine.shapes.RECTANGLE) && first.shape == engine.shapes.CIRCLE)
-    //     return engine.rectCircleColliding(second, first);
 
     if (first.shape == engine.shapes.ROUNDRECTANGLE && second.shape == engine.shapes.CIRCLE)
         return engine.roundRectCircleIntersect(first, second);
-    // if (second.shape == engine.shapes.ROUNDRECTANGLE && first.shape == engine.shapes.CIRCLE)
-    //     return engine.roundRectCircleIntersect(second, first);
 
     return false;
 }
