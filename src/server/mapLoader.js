@@ -92,7 +92,6 @@ class mapLoader {
         if (maps[mapname] == undefined) {
             console.log("end");
             mapname = "e1m1";
-
         }
 
         let mapdata = maps[mapname];
@@ -112,7 +111,6 @@ class mapLoader {
         res[1]++;
         res = res[0] + res[1];
         this.setMap(res)
-
     }
 
 }//Maps
