@@ -1,0 +1,1 @@
+start cmd /k npx http-server -c-1 -p 8081
